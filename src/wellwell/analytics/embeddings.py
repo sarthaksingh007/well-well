@@ -4,6 +4,7 @@ The cache lives outside the app's tables (its own Postgres schema), so resets an
 throw away work: a section is embedded once per model, ever.
 """
 
+import threading
 import hashlib
 from collections.abc import Callable
 from functools import lru_cache
@@ -50,8 +51,17 @@ def section_text(title: str | None, section: str | None, body: str) -> str:
 MODEL_STATE = {"state": "not_loaded", "error": None}
 
 
-@lru_cache(maxsize=1)
+_LOAD_LOCK = threading.Lock()
+
+
 def _model():
+    # One shared model per process, even when several questions run in parallel threads.
+    with _LOAD_LOCK:
+        return _load_model()
+
+
+@lru_cache(maxsize=1)
+def _load_model():
     from sentence_transformers import SentenceTransformer
 
     import torch

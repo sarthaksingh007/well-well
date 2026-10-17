@@ -50,17 +50,9 @@ TURNS = [
 ]
 
 
-def main() -> None:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--only", nargs="*", help="question ids or prefixes, e.g. Q3 Q8")
-    parser.add_argument("--out", default="docs/results/final")
-    args = parser.parse_args()
-    out = Path(args.out)
-    out.mkdir(parents=True, exist_ok=True)
+def run_group(turns, out: Path) -> None:
     conversation = None
-    for turn_id, user, question, new_session in TURNS:
-        if args.only and not any(turn_id == o or turn_id.startswith(o + ".") for o in args.only):
-            continue
+    for turn_id, user, question, new_session in turns:
         if new_session or conversation is None:
             conversation = start_conversation(user)
         started = time.time()
@@ -74,7 +66,29 @@ def main() -> None:
         kind = (reply.visual or {}).get("kind")
         rows = len((reply.visual or {}).get("rows") or [])
         print(f"{turn_id} {record['seconds']}s tools={record['tools']} visual={kind} rows={rows}", flush=True)
-        sys.stdout.flush()
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--only", nargs="*", help="question ids or prefixes, e.g. Q3 Q8")
+    parser.add_argument("--out", default="docs/results/final")
+    parser.add_argument("--workers", type=int, default=1, help="questions answered at the same time (turns of one question stay in order)")
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(parents=True, exist_ok=True)
+    groups: dict[str, list] = {}
+    for turn in TURNS:
+        if args.only and not any(turn[0] == o or turn[0].startswith(o + ".") for o in args.only):
+            continue
+        groups.setdefault(turn[0].split(".")[0], []).append(turn)
+    if args.workers > 1:
+        from concurrent.futures import ThreadPoolExecutor
+
+        with ThreadPoolExecutor(args.workers) as pool:
+            list(pool.map(lambda g: run_group(g, out), groups.values()))
+    else:
+        for group in groups.values():
+            run_group(group, out)
     from final_report import build, to_pdf
 
     page = build(out)

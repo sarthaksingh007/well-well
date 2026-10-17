@@ -60,35 +60,25 @@ The tools are typed and take parameters (any well, area, well type, period or me
 ### Sample dataset: the 18 example scenarios
 **18/18 scenarios and 27/27 steps correct**, run end to end through the API on a fresh database. "Correct" means the facts, IDs, dates, names, cited records and the right visual. The median answer took 4 s. We also have 95 automated tests (unit, edge cases, API, loader, embeddings, guardrails), and the Docker from-scratch smoke test passes.
 
-| # | Question (short) | Key result | Visual |
+Examples: WELL-0001 not producing (INS-0001-0203, 3.2 °C < 15, planned shut-in CTX-0001-003); NE-7 top-3 downtime 0121 49 d, 0138 42 d, 0107 42 d (bar); 2026 spill heatmap by area × month; WELL-0164 correction 24.0 → 41.0 °C seen by every user; Tyler's claim on WELL-0175 contradicted (0.4 °C) and kept as unconfirmed.
+
+### Final questions on the test dataset (600 wells, today = 15 Jan 2027)
+Loaded with `wellwell load-github`; every turn asked exactly as written, in order, as the named user. Full answers with
+their visuals: `docs/results/final/final-answers.pdf`.
+
+| # | Our copilot's answer (short) | Visual | Verdict |
 |---|---|---|---|
-| Q1 | WELL-0001 producing now? | No: INS-0001-0203, 15 Oct, Ryan Brooks; 3.2 °C < 15; CTX-0001-003 planned shut-in; recorded status out of date | card |
-| Q2 | NE Block 8 not producing, and why | 0164, 0170 (MNT-0170-031), 0172 (MNT-0172-028), 0175; two with no recorded reason | table |
-| Q3 | 13-week temperatures | 13 readings; not producing on 8 and 15 Oct | line |
-| Q4 | WELL-0001 spills, 4 years | 6 spills, 15.1 bbl; INS-0001-0070 excluded (rainwater) | table |
-| Q5 | Days down in 2025 | 21 days (3 × 7): MNT-0001-021, MNT-0001-023 | text |
-| Q6 | NE-7 top 3 by downtime, 4 months | 0121 49, 0138 42, 0107 42 days | bar |
-| Q7 | NE-8 real spills, 90 days | 0151, 0165, 0175, 0186 with coordinates | map |
-| Q8 | 2026 spills, area × month | 35 / 43 / 37 / 26 | heatmap |
-| Q9 | WELL-0001 rules broken | SR-01 (41 h), SR-02 (7 h), SR-03, RC-04; USD 5,000 open; RCA and shut-in pending | table |
-| Q10 | SW-24 containment over limit | 0082 7.1 h, 0100 8.1 h (from reports) | table |
-| Q11 | "The three wells from yesterday": cost | USD 25,794 / 46,942 / 5,176 (private recall) | table |
-| Q12 | Correct the WELL-0164 reading | 24.0 → 41.0 °C, now producing; "Pump jack not moving" note flagged | card |
-| Q13 | Spill 4.5 → 5.4 bbl | Now reportable; SR-01 overdue | card |
-| Q14 | T350 RCA rule | Adds WELL-0120 (T350), not 0102 (T200); cites Michael Turner | table |
-| Q15 | Correction reaches other users | Jessica sees 41.0 °C by Michael Turner, plus the disagreeing note | card |
-| Q16 | Shared vs private | Michael sees Jake's WELL-0007 note; Jessica: "no such earlier conversation" | card |
-| Q17 | People vs data | Tyler's "running" contradicted (0.4 °C); Jake's WELL-0001 claim unconfirmed | card |
-| Q18 | WELL-0101 spill real? | Yes: opinion notes disagree, no formal correction, so it stands | card |
-
-### Final questions on the test dataset
-Test data was loaded with `wellwell load <path> --dataset test`.
-
-| # | Question | Our answer (short) | Visual | Notes |
-|---|---|---|---|---|
-| F1 | | | | |
-| F2 | | | | |
-| F3 | | | | |
+| Q1 Reservoir pressure | No pressure data in any record; offered a clearly labelled stand-in map (temperature margin, producing status) | map | ✅ honest |
+| Q2 Best producer | Oil volume is not recorded, so it can't be answered; labelled stand-in: 2026 uptime and most-downtime wells | — | ✅ honest |
+| Q3 Gas reports | Right rule (OPS-1: 24 h, 12 h from 1 Jan 2027, drones don't count); found 16 of the 26 gas notes, 13 met / 3 missed | table | ⚠️ partial |
+| Q4 Bypasses | WELL-0248 allowed (MOC-2026-031 + 044 to 28 Feb); WELL-0249 still in and flagged; missed WELL-0405 and past 0158/0087/0561 | table | ⚠️ partial |
+| Q5 Regulator letter | Right scope (NE-7/NE-8, ≥ 5 bbl since 1 Jun 2026), 6 spills, lab-sample test; non-compliant 0123 ✓ but missed 0182/0262 | table | ⚠️ partial |
+| Q6 Which status is right | Compared latest inspection, recorded status and operator notes (e.g. WELL-0010 below the T350 rule); not the full list of 12 | table | ⚠️ partial |
+| Q7 What operators hear | Top 10 from last-month notes with no repair since (WELL-0323, 0422, 0329 first); crew picks with reasons | table | ⚠️ partial |
+| Q8 Who told you that | Nathan's WELL-0333 swap saved as a shared note in his name (no work order); his sort/$k preference private; recalled pumps from 'Parts installed'; Olivia's second-hand WELL-0577 claim kept on the recall list; Nathan's NW-12 list sorted by area/ID in $k | table | ✅ mostly |
+| Q9 Several topics | Recalled pumps by area; Nathan Pierce leads Northwest Production, 150 wells; OPS-5 cold-weather check, WELL-0310 missed it (17 Dec, −6.0 °C); no H2S reading recorded; turn 5 lost the pump context | table | ✅ 9.1–9.4, ⚠️ 9.5 |
+| Q10 Waiting on | Said delay reasons are not tracked; they are in report text, so this was missed | table | ❌ |
+| Q11 Hotter region | Southeast Block 31 hottest (31.4 °C above air vs 26.3–29.2 °C); missed that this is mostly its T500 wells | bar | ⚠️ partial |
 
 ### What worked
 - Deterministic tools made answers exact and repeatable. The model never does arithmetic.
@@ -97,6 +87,12 @@ Test data was loaded with `wellwell load <path> --dataset test`.
 - Prefetching obvious lookups and switching to a faster model cut typical answers from 40–130 s down to 2–10 s.
 
 ### What didn't, and why
+- The test release added rules that live only in new documents (operations SOP rev 2, MOC memos, a recall notice, a
+  regulator letter) and in free-text operator notes. Our typed tools covered recalls (new `installed_pumps` tool), but
+  gas response, bypass approvals and note-vs-inspection status were answered through SQL over note text, which is
+  less complete than a dedicated tool. Next step: small parsers that turn operator notes into events (gas, bypass in/out,
+  shut-in/restart) the same way we parse repair reports.
+- Free-tier quotas: the strongest model ran out mid-run; the chain now skips an exhausted model instead of retrying for hours.
 - The free Gemma endpoint often returned 500/504 errors. We fixed this with backoff, hedged requests and a model fallback chain.
 - A Postgres NULL-ordering difference picked the wrong downtime cause. Our eval caught it, and explicit ordering fixed it.
 - Private recall first fell back to an unrelated chat. It now needs a real match, and otherwise says there is no such conversation.

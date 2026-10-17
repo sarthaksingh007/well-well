@@ -40,7 +40,7 @@ class AgentAnswer:
 @dataclass
 class AgentConfig:
     max_rounds: int = 10
-    max_seconds: int = 150
+    max_seconds: int = 300
     observation_chars: int = 6000
     on_step: Callable[[str], None] | None = field(default=None)
 
@@ -145,6 +145,11 @@ class Agent:
                 feedback_note = f"\nYour last reply was not valid JSON ({error}). Reply with ONE JSON object only."
                 continue
             feedback_note = ""
+            if "final" in action and isinstance(action["final"], str):
+                action["final"] = {"answer": action["final"]}
+            if "final" in action and not isinstance(action["final"], dict):
+                feedback_note = "\nYour \"final\" was empty. Reply with {\"final\": {\"answer\": ...}}."
+                continue
             if "final" in action:
                 if not steps and _looks_factual(question):
                     feedback_note = "\nYou must call at least one tool before answering a question about the data."
@@ -167,6 +172,19 @@ class Agent:
                 step.latency_ms = int((time.perf_counter() - tick) * 1000)
                 steps.append(step)
 
+        if any(s.result for s in steps):
+            # Out of rounds or time: ask once more for the answer from what the tools already found.
+            scratchpad = "\n\n".join(self._observation(s) for s in steps)
+            try:
+                completion = self.llm.complete(self.system, (
+                    f"User question:\n{question}\n\nTool results:\n{scratchpad}\n\nNo more tool calls are allowed. "
+                    "Reply now with one JSON object containing \"final\", answering as fully as these results allow "
+                    "and saying plainly what could not be checked."))
+                action = extract_json(completion.text)
+                if "final" in action:
+                    return self._finish(action["final"], steps, question, wanted_visual, completion.model)
+            except (LLMError, ValueError):
+                log.warning("agent.final_retry_failed", steps=len(steps))
         fallback = next((s for s in reversed(steps) if s.result), None)
         if fallback:
             facts = " ".join(s.result.summary for s in steps if s.result)
