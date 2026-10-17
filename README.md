@@ -4,6 +4,22 @@ An evidence-first copilot for oil-well operations. Ask about your wells in plain
 
 Built for the FlytBase *Asset Intelligence Copilot* challenge (Hacktoberfest 2026 Hack Day, Pune). Runs on **Gemini 3.8 Flash** with a fallback chain down to **Gemma 4** (a model whose daily quota runs out is skipped), **BGE-large** embeddings for document search, and **PostgreSQL 16**. Models are configurable with `LLM_MODELS` (an all-Gemma setup works too).
 
+## Start from scratch (one command)
+
+On a new Mac or Linux machine with **Docker Desktop running** and **git** (uv is installed for you; no Hugging Face token):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/sarthaksingh007/well-well/main/scripts/setup_from_scratch.sh -o setup_from_scratch.sh
+GEMINI_API_KEY=<your key> bash setup_from_scratch.sh
+```
+
+It clones the repo to `~/well-well`, writes `.env` (your key, `TODAY=2027-01-15`, Gemini Flash-Lite with Gemma 4 as
+fallback), installs packages, starts PostgreSQL in Docker, loads the test dataset from GitHub (search vectors come from
+`seed/`, nothing is re-embedded) and opens **http://localhost:8765**. Without `GEMINI_API_KEY` it asks for the key.
+
+Then: pick a user (top left) → **New chat** → ask a question from `data/raw/challenge/test-data/final-questions.md`.
+To answer all final questions and build the PDF: `uv run python eval/run_final.py`. Stop: `pkill -f "wellwell serve"`.
+
 ## Run it: exact steps (test dataset + all final questions)
 
 Needs: [uv](https://docs.astral.sh/uv/) (`curl -LsSf https://astral.sh/uv/install.sh | sh`), Docker Desktop running, git,
