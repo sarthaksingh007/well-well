@@ -62,23 +62,57 @@ The tools are typed and take parameters (any well, area, well type, period or me
 
 Examples: WELL-0001 not producing (INS-0001-0203, 3.2 °C < 15, planned shut-in CTX-0001-003); NE-7 top-3 downtime 0121 49 d, 0138 42 d, 0107 42 d (bar); 2026 spill heatmap by area × month; WELL-0164 correction 24.0 → 41.0 °C seen by every user; Tyler's claim on WELL-0175 contradicted (0.4 °C) and kept as unconfirmed.
 
-### Final questions on the test dataset (600 wells, today = 15 Jan 2027)
-Loaded with `wellwell load-github`; every turn asked exactly as written, in order, as the named user. Full answers with
-their visuals: `docs/results/final/final-answers.pdf`.
+### Final questions: our copilot's answers (test dataset, 600 wells, today = 15 Jan 2027)
+Each turn asked exactly as written, in order, as the named user; model Gemini 3.5 Flash-Lite. Full answers with tables
+and citations: `Well-Well-Final-Answers.pdf`. ✅ correct · ⚠️ partly correct · ❌ wrong.
 
-| # | Our copilot's answer (short) | Visual | Verdict |
-|---|---|---|---|
-| Q1 Reservoir pressure | No pressure data in any record; offered a clearly labelled stand-in map (temperature margin, producing status) | map | ✅ honest |
-| Q2 Best producer | Oil volume is not recorded, so it can't be answered; labelled stand-in: 2026 uptime and most-downtime wells | — | ✅ honest |
-| Q3 Gas reports | Right rule (OPS-1: 24 h, 12 h from 1 Jan 2027, drones don't count); found 16 of the 26 gas notes, 13 met / 3 missed | table | ⚠️ partial |
-| Q4 Bypasses | WELL-0248 allowed (MOC-2026-031 + 044 to 28 Feb); WELL-0249 still in and flagged; missed WELL-0405 and past 0158/0087/0561 | table | ⚠️ partial |
-| Q5 Regulator letter | Right scope (NE-7/NE-8, ≥ 5 bbl since 1 Jun 2026), 6 spills, lab-sample test; non-compliant 0123 ✓ but missed 0182/0262 | table | ⚠️ partial |
-| Q6 Which status is right | Compared latest inspection, recorded status and operator notes (e.g. WELL-0010 below the T350 rule); not the full list of 12 | table | ⚠️ partial |
-| Q7 What operators hear | Top 10 from last-month notes with no repair since (WELL-0323, 0422, 0329 first); crew picks with reasons | table | ⚠️ partial |
-| Q8 Who told you that | Nathan's WELL-0333 swap saved as a shared note in his name (no work order); his sort/$k preference private; recalled pumps from 'Parts installed'; Olivia's second-hand WELL-0577 claim kept on the recall list; Nathan's NW-12 list sorted by area/ID in $k | table | ✅ mostly |
-| Q9 Several topics | Recalled pumps by area; Nathan Pierce leads Northwest Production, 150 wells; OPS-5 cold-weather check, WELL-0310 missed it (17 Dec, −6.0 °C); no H2S reading recorded; turn 5 lost the pump context | table | ✅ 9.1–9.4, ⚠️ 9.5 |
-| Q10 Waiting on | Said delay reasons are not tracked; they are in report text, so this was missed | table | ❌ |
-| Q11 Hotter region | Southeast Block 31 hottest (31.4 °C above air vs 26.3–29.2 °C); missed that this is mostly its T500 wells | bar | ⚠️ partial |
+**Q1 (Michael, reservoir pressure map)** ✅ "The database does not contain reservoir or wellhead pressure measurements… As the
+closest honest alternative, the map shows wellhead temperature above air and producing status for all 600 wells (554
+producing, 46 not)."
+
+**Q2 (Robert, best producer 2026)** ✅ "Oil volumes are not recorded, so this can't be answered." Labelled stand-in: wells
+producing at all 52 weekly inspections in 2026 (e.g. WELL-0008, 0016, 0017), and the most downtime (WELL-0496, 112 days).
+
+**Q3 (Laura, gas reports since 1 Nov)** ⚠️ Rule from [SOP-OPS OPS-1]: a maintenance job or manual inspection within 24 h
+(12 h from 1 Jan 2027; drones don't count). Table of 16 gas notes: 13 met, 3 missed, e.g. WELL-0332 (CTX-0332-004, 3 Dec,
+no response). The reference has 26 reports, so 10 notes worded differently were missed.
+
+**Q4 (Chris, temporary bypasses)** ⚠️ In place now: WELL-0248 allowed (MOC-2026-031, extended by MOC-2026-044 to 28 Feb 2027);
+WELL-0249 still in and flagged; WELL-0405 in since 20 Dec with no MOC (not approved). Allowed: 0013, 0062, 0118, 0476.
+Missed: 0249 is *expired* (MOC-2026-036 ran out 15 Dec), and the past violations at 0158, 0087, 0561.
+
+**Q5 (Michael, regulator letter)** ⚠️ Letter of 20 Nov 2026 covers NE-7/NE-8 spills ≥ 5 bbl since 1 Jun 2026: 6 spills; the test is
+"soil samples sent to the lab" in the clean-up report. Non-compliant named: WELL-0123 ✓, WELL-0215 ✗ (reference: 0123, 0182, 0262).
+
+**Q6 (Nathan, which status is right)** ⚠️ Compared latest inspection, recorded status and operator notes; e.g. WELL-0010 not
+producing (INS-0010-0219, 14 Jan, below the T350 rule) although notes say "unit still running". Did not produce the full list of 12.
+
+**Q7 (Robert, what operators hear)** ⚠️ Top 10 from last-month notes with no repair since: 1 WELL-0323 (stuffing box leak,
+CTX-0323-002), 2 WELL-0422 (separator high-pressure alarm), 3 WELL-0329 (drive tripping), then 0370, 0579, 0020, 0581,
+0043, 0302, 0097, each quoting its note. Crew first: 0323, 0422, 0329. Missed the recalled-pump and temperature-trend signals.
+
+**Q8 (who told you that)** ✅ mostly.
+1. Nathan's WELL-0333 swap was saved as a shared note in his name (FB-0001, no work order).
+2. His sort / $k preference was saved privately.
+3. Recalled pumps for Robert: the tool returned the 9 from 'Parts installed' vs recall lots LOT-2409-A/C, LOT-2410-B, but the
+   written answer also listed 0149/0215/0304, which are not in the tool data ❌.
+4. Olivia's second-hand WELL-0577 claim was recorded as unconfirmed, and the pump stays on the list.
+5. Nathan's NW-12 list was sorted by area and ID, in $k: 0305 $24.5k, 0426 $24.0k, 0428 $27.1k, plus 0333 shown with his note.
+
+**Q9 (Robert, one session)** ✅ 9.1–9.4, ⚠️ 9.5.
+1. 9 recalled pumps: NW-12 ×4, SW-23 ×2, NE-08 ×2, SE-32 ×1.
+2. Nathan Pierce leads Northwest Production, which runs 150 wells.
+3. OPS-5: at or below −5 °C on a producing well, a heat-trace check is due within 7 days; WELL-0310 missed it (INS-0310-0213,
+   17 Dec, −6.0 °C).
+4. No H2S measurement exists for WELL-0332.
+5. Lost the pump context and listed all 46 non-producing wells.
+6. Deal with WELL-0310 first.
+
+**Q10 (Michael, what we wait on)** ❌ Said waiting reasons are not tracked; they are in the repair-report text (parts, crews,
+contractors, weather), so the breakdown was missed. It gave 2026 job counts and average duration by area instead.
+
+**Q11 (Olivia, hotter region)** ⚠️ Southeast Block 31 runs hottest (31.4 °C above air vs 26.3–29.2 °C elsewhere), as a bar chart;
+it did not say this is mostly because SE-31 has the most T500 wells.
 
 ### What worked
 - Deterministic tools made answers exact and repeatable. The model never does arithmetic.
