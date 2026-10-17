@@ -27,7 +27,7 @@ git log --oneline -1
 
 say "Settings (.env)"
 [ -f .env ] || cp .env.example .env
-KEY="${GEMINI_API_KEY:-}"
+KEY="${GEMINI_API_KEY:-${GOOGLE_API_KEY:-}}"
 if [ -z "$KEY" ] && ! grep -q "^GEMINI_API_KEY=." .env; then
   read -r -p "Gemini API key (from https://aistudio.google.com/apikey): " KEY
 fi
