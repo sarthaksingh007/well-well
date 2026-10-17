@@ -1,0 +1,39 @@
+services:
+  db:
+    image: postgres:16.4-alpine
+    environment:
+      POSTGRES_USER: wellwell
+      POSTGRES_PASSWORD: wellwell
+      POSTGRES_DB: wellwell
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U wellwell"]
+      interval: 3s
+      retries: 20
+
+  app:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+psycopg://wellwell:wellwell@db:5432/wellwell
+      GEMINI_API_KEY: ${GEMINI_API_KEY:?Set GEMINI_API_KEY in your shell or a .env file}
+      LLM_MODELS: ${LLM_MODELS:-gemini-3.8-flash,gemini-3.7-flash,gemini-3-flash-preview,gemini-3.5-flash,gemini-3.5-flash-lite,gemma-4-26b-a4b-it}
+      GEMMA_MODEL: ${GEMMA_MODEL:-gemma-4-26b-a4b-it}
+      GEMMA_FALLBACK_MODEL: ${GEMMA_FALLBACK_MODEL:-gemma-4-31b-it}
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+      TODAY: ${TODAY:-2026-10-17}
+      DATA_FOLDER: ${DATA_FOLDER:-sample-data}
+      EMBED_PROVIDER: ${EMBED_PROVIDER:-bge}
+      EMBED_MODEL: ${EMBED_MODEL:-BAAI/bge-large-en-v1.5}
+    ports:
+      - "${WELLWELL_PORT:-8765}:8765"
+    volumes:
+      - ./data/raw:/app/data/raw
+      - models:/app/.cache/huggingface
+
+volumes:
+  pgdata:
+  models:

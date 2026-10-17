@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Well-Well</title>
+<link rel="icon" type="image/svg+xml" href="/static/icon.svg">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          bg: '#0E1217', surface: '#151B22', 'surface-2': '#1C242E', border: '#27313D',
+          text: '#E6EAF0', muted: '#8A96A6', faint: '#5B6675', accent: '#4C9EEB',
+          danger: '#E5484D', warning: '#F2A93B', success: '#3DB57A', slate: '#64748B',
+        },
+        fontFamily: {
+          sans: ['"IBM Plex Sans"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+          mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
+        },
+        borderRadius: { card: '6px', chip: '4px' },
+      },
+    },
+  };
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/styles.css">
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
+</head>
+<body class="bg-bg text-text font-sans antialiased flex h-screen h-[100dvh] w-full overflow-hidden">
+
+<div id="nav-scrim" class="hidden fixed inset-0 bg-black/50 z-40"></div>
+
+<aside id="sidebar" aria-label="Navigation" class="w-[264px] min-w-[264px] h-full bg-surface border-r border-border flex flex-col justify-between">
+  <div class="flex flex-col p-3 pb-1 overflow-y-auto min-h-0 scroll-thin">
+    <div class="px-1 py-1 mb-3">
+      <div class="flex items-center gap-2">
+        <img src="/static/icon.svg" alt="" width="22" height="22" class="w-[22px] h-[22px]">
+        <span class="font-semibold text-[15px] tracking-tight">Well-Well</span>
+      </div>
+      <div class="text-[11px] text-muted mt-0.5">Asset Intelligence Copilot</div>
+    </div>
+
+    <div class="mb-3 relative">
+      <div class="text-[10px] uppercase font-mono tracking-wider text-muted mb-1 px-1">Signed in as</div>
+      <button id="user-trigger" type="button" aria-haspopup="listbox" aria-expanded="false"
+        class="w-full bg-surface-2 border border-border rounded-card p-2 flex items-center justify-between text-left hover:border-[#3A4452] transition-colors">
+        <span class="flex items-center gap-2 min-w-0">
+          <span id="user-initials" class="w-8 h-8 rounded-full bg-border text-accent font-mono text-[11px] font-semibold flex items-center justify-center shrink-0">··</span>
+          <span class="min-w-0 flex flex-col">
+            <span id="user-name" class="text-[12px] font-medium truncate leading-tight">Loading…</span>
+            <span id="user-role" class="text-[10px] text-muted truncate leading-tight mt-0.5"></span>
+          </span>
+        </span>
+        <svg class="w-3.5 h-3.5 text-muted shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg>
+      </button>
+      <div id="user-list" role="listbox" class="hidden absolute left-0 right-0 z-30 mt-1 max-h-[360px] overflow-y-auto scroll-thin bg-surface border border-border rounded-card divide-y divide-border"></div>
+    </div>
+
+    <button id="new-chat" type="button"
+      class="w-full flex items-center justify-center gap-2 py-1.5 px-3 rounded-card border border-accent text-accent hover:bg-accent/10 transition-colors text-[12px] font-medium mb-3">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-width="2"/></svg>
+      New chat
+    </button>
+
+    <div class="mb-3">
+      <div class="text-[10px] uppercase font-mono tracking-wider text-muted mb-1.5 px-1">Conversations</div>
+      <div id="conversation-list" class="space-y-0.5" aria-live="polite"></div>
+    </div>
+
+    <div class="h-px bg-border my-1"></div>
+    <button id="memory-open" type="button" class="mt-2 mb-2 px-2 py-1.5 rounded-chip hover:bg-surface-2 transition-colors text-left">
+      <span class="flex items-center justify-between">
+        <span class="text-[12px] font-medium">Memory</span>
+        <svg class="w-3.5 h-3.5 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-width="2"/></svg>
+      </span>
+      <span id="memory-counts" class="block text-[10px] text-muted font-mono mt-0.5">Shared · Private · Corrections</span>
+    </button>
+  </div>
+
+  <div class="p-3 border-t border-border flex flex-col gap-2">
+    <div id="fleet-line" class="text-[10px] text-muted font-mono leading-normal"></div>
+    <button id="data-indicator" type="button" class="hidden text-left text-[10px] font-mono text-accent hover:underline"></button>
+    <div>
+      <span id="model-chip" class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-chip bg-surface-2 border border-border text-[10px] font-mono">
+        <span id="model-dot" class="w-1.5 h-1.5 rounded-full bg-faint"></span>
+        <span id="model-text">Connecting…</span>
+      </span>
+    </div>
+  </div>
+</aside>
+
+<main id="main" class="flex-1 min-w-0 h-full flex flex-col bg-bg">
+  <header id="mobile-bar" class="shrink-0 items-center gap-2 px-2 h-14 border-b border-border bg-surface">
+    <button id="nav-open" type="button" aria-label="Open menu" aria-controls="sidebar" aria-expanded="false"
+      class="w-11 h-11 rounded-card flex items-center justify-center text-text hover:bg-surface-2">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+    <img src="/static/icon.svg" alt="" width="22" height="22" class="w-[22px] h-[22px]">
+    <span class="font-semibold text-[15px] tracking-tight">Well-Well</span>
+    <span id="mobile-avatar" class="ml-auto mr-2 w-8 h-8 rounded-full font-mono text-[11px] font-semibold flex items-center justify-center bg-border text-accent" aria-hidden="true"></span>
+  </header>
+  <div id="thread-scroll" class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden scroll-thin px-4 min-[900px]:px-6">
+    <div id="empty-state" class="w-full max-w-[860px] mx-auto min-h-full flex flex-col items-center justify-center text-center py-10">
+      <img src="/static/icon.svg" alt="" width="56" height="56" class="w-14 h-14 mb-3">
+      <h1 class="text-[28px] font-semibold tracking-tight">Well-Well</h1>
+      <p class="text-[14px] text-muted mt-1 mb-1">Ask anything about your wells. Every answer shows its proof.</p>
+      <div id="empty-caption" class="text-[11px] font-mono text-faint tracking-wider uppercase mb-8"></div>
+      <section id="overview" class="w-full text-left mb-8" aria-labelledby="overview-label">
+        <div class="flex items-baseline justify-between mb-2.5">
+          <h2 id="overview-label" class="text-[11px] font-mono uppercase tracking-[0.08em] text-muted">Field at a glance</h2>
+          <span id="overview-asof" class="text-[11px] font-mono text-faint"></span>
+        </div>
+        <div id="overview-body"></div>
+      </section>
+      <section class="w-full text-left" aria-labelledby="examples-label">
+        <h2 id="examples-label" class="text-[11px] font-mono uppercase tracking-[0.08em] text-muted mb-2.5">Try asking</h2>
+        <div id="examples" class="w-full grid grid-cols-1 md:grid-cols-2 gap-3 text-left"></div>
+      </section>
+    </div>
+    <div id="boot-error" class="hidden w-full max-w-[860px] mx-auto min-h-full flex-col items-center justify-center text-center gap-3 py-10" role="alert"></div>
+    <div id="thread" aria-live="polite" class="hidden w-full max-w-[860px] mx-auto flex flex-col gap-6 pt-8 pb-10"></div>
+  </div>
+
+  <div id="composer-wrap" class="px-4 min-[900px]:px-6 pt-2">
+    <form id="composer" class="w-full max-w-[860px] mx-auto">
+      <div class="w-full bg-surface border border-border rounded-[10px] px-3.5 pt-3 pb-2.5 focus-within:border-accent focus-within:ring-4 focus-within:ring-accent/15 transition">
+        <textarea id="question" rows="2" maxlength="4000" placeholder="Ask about a well, an area, a spill or a rule…" aria-label="Your question"
+          class="w-full resize-none bg-transparent border-none text-[14px] leading-6 placeholder-muted focus:outline-none max-h-48 scroll-thin"></textarea>
+        <div class="mt-1.5 flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+          <div class="flex flex-wrap items-center gap-x-2 gap-y-2 text-[11px] text-muted">
+            <span id="search-label" class="whitespace-nowrap" aria-label="Document search"><span class="max-[520px]:hidden">Document search</span><span class="hidden max-[520px]:inline" aria-hidden="true">Search</span></span>
+            <div id="search-modes" role="radiogroup" aria-labelledby="search-label" class="inline-flex border border-border rounded-chip overflow-hidden"></div>
+          </div>
+          <div class="flex items-center gap-3 ml-auto">
+            <span class="inline-flex items-center gap-2 text-[11px] text-muted">
+              <span id="learning-label" class="whitespace-nowrap">Learning</span>
+              <span id="learning-modes" role="radiogroup" aria-labelledby="learning-label" class="inline-flex border border-border rounded-chip overflow-hidden"></span>
+            </span>
+            <span class="text-[10px] font-mono text-slate hidden xl:inline">Enter to send · Shift+Enter new line</span>
+            <button id="send" type="submit" aria-label="Send"
+              class="h-9 px-3.5 rounded-card bg-accent text-bg text-[13px] font-medium flex items-center gap-1.5 hover:bg-[#3A8BD6] transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
+              <span id="send-spinner" class="spin hidden" aria-hidden="true"></span>
+              <svg id="send-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"/></svg>
+              <span>Send</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="mt-2 text-center text-[11px] text-muted">AI can be wrong. Every number links to its record.</div>
+    </form>
+  </div>
+</main>
+
+<div id="memory-scrim" class="hidden fixed inset-0 bg-black/50 z-40"></div>
+<section id="memory-drawer" aria-label="Memory" class="hidden fixed top-0 right-0 w-full sm:w-[520px] h-full bg-surface border-l border-border z-50 flex-col">
+  <div class="px-5 py-3.5 border-b border-border flex items-center justify-between shrink-0">
+    <div class="flex items-center gap-2.5">
+      <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 7c0-1.7 3.6-3 8-3s8 1.3 8 3-3.6 3-8 3-8-1.3-8-3zm0 0v10c0 1.7 3.6 3 8 3s8-1.3 8-3V7M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <div>
+        <h2 class="text-sm font-bold tracking-tight">Memory</h2>
+        <p id="memory-sub" class="text-[11px] text-muted">What the copilot remembers, and who said it</p>
+      </div>
+    </div>
+    <button id="memory-close" type="button" title="Close" class="w-7 h-7 rounded-card border border-border hover:bg-surface-2 flex items-center justify-center text-muted hover:text-text">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+  <div class="px-5 py-2.5 border-b border-border bg-surface-2/40 shrink-0">
+    <input id="memory-search" type="text" placeholder="Search WELL-… or text"
+      class="w-full bg-surface-2 border border-border rounded-card px-3 py-1.5 text-xs font-mono placeholder:text-muted placeholder:font-sans focus:outline-none focus:border-accent">
+  </div>
+  <div id="memory-tabs" class="px-5 border-b border-border flex items-center gap-4 shrink-0 overflow-x-auto scroll-thin"></div>
+  <div id="memory-body" class="flex-1 overflow-y-auto scroll-thin p-5 space-y-3" aria-live="polite"></div>
+</section>
+
+<dialog id="data-dialog" aria-labelledby="data-dialog-title" aria-modal="true"
+  class="w-[min(460px,calc(100vw-32px))] bg-surface text-text border border-border rounded-card p-0">
+  <div class="p-5 space-y-3">
+    <h2 id="data-dialog-title" class="text-[15px] font-semibold flex items-center gap-2"><img src="/static/icon.svg" alt="" width="20" height="20">Loading dataset</h2>
+    <p id="data-line" class="text-[13px]" aria-live="polite"></p>
+    <p id="data-stage" class="text-[12px] text-muted"></p>
+    <div id="data-bar-wrap" class="h-1.5 w-full bg-surface-2 rounded-full overflow-hidden" role="progressbar" aria-labelledby="data-line" aria-valuemin="0" aria-valuemax="100">
+      <div id="data-bar" class="h-full bg-accent rounded-full transition-[width] duration-500" style="width:0%"></div>
+    </div>
+    <ol id="data-steps" class="hidden space-y-2.5 pt-1" aria-live="polite"></ol>
+    <p id="data-help" class="hidden text-[12px] text-muted"></p>
+    <div id="data-actions" class="flex justify-end gap-2 pt-1"></div>
+  </div>
+</dialog>
+
+<script type="module" src="/static/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>WellWise — Copilot Chat Shell</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<style>
+    body {
+      font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #F6F7F9;
+      color: #121820;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+    .font-mono-code {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #F6F7F9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #D9DEE5;
+      border-radius: 2px;
+    }
+  </style>
+</head>
+<body class="bg-[#F6F7F9] text-[#121820] flex h-screen w-full overflow-hidden antialiased select-none">
+<!-- LEFT SIDEBAR (264px, surface #FFFFFF, border-r #D9DEE5) -->
+<aside class="w-[264px] min-w-[264px] max-w-[264px] h-full bg-[#FFFFFF] border-r border-[#D9DEE5] flex flex-col justify-between z-20 relative">
+<!-- Top section of sidebar -->
+<div class="flex flex-col p-3 pb-1 overflow-y-auto">
+<!-- Brand Wordmark -->
+<div class="px-1 py-1 mb-3">
+<div class="flex items-center gap-2">
+<span class="inline-block w-2.5 h-2.5 rounded-[2px] bg-[#1F6FD1]"></span>
+<span class="font-semibold text-[15px] tracking-tight text-[#121820]">Well-Well</span>
+</div>
+<div class="text-[11px] text-[#5B6675] mt-0.5 tracking-normal">Asset Intelligence Copilot</div>
+</div>
+<!-- Signed In User Picker (Select Box OPEN) -->
+<div class="mb-3">
+<div class="text-[10px] uppercase font-mono-code tracking-wider text-[#5B6675] mb-1 px-1">Signed in as</div>
+<!-- Active User Trigger Box -->
+<div class="w-full bg-[#EEF1F4] border border-[#D9DEE5] rounded-[6px] p-2 flex items-center justify-between cursor-pointer hover:border-[#1F6FD1]/50 transition-colors"><div class="flex items-center gap-2 overflow-hidden"><div class="w-7 h-7 rounded-[4px] bg-[#D9DEE5] text-[#1F6FD1] font-mono-code text-[11px] font-semibold flex items-center justify-center shrink-0">MT</div><div class="min-w-0 flex flex-col text-left"><div class="text-[12px] font-medium text-[#121820] truncate leading-tight">Michael Turner</div><div class="text-[10px] text-[#5B6675] truncate leading-tight mt-0.5">Production supervisor · Northeast</div></div></div><svg class="w-3.5 h-3.5 text-[#5B6675] shrink-0" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></div>
+<!-- Dropdown OPEN list -->
+</div>
+<!-- New Chat Button (accent outline) -->
+<button class="w-full flex items-center justify-center gap-2 py-1.5 px-3 rounded-[6px] border border-[#1F6FD1] text-[#1F6FD1] hover:bg-[#1F6FD1]/10 transition-colors text-[12px] font-medium mb-3">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+        New chat
+      </button>
+<!-- Conversations Section -->
+<div class="mb-3">
+<div class="text-[10px] uppercase font-mono-code tracking-wider text-[#5B6675] mb-1.5 px-1">Conversations</div>
+<div class="space-y-1"><div class="px-2 py-1.5 rounded-[4px] bg-[#EEF1F4] border-l-2 border-[#1F6FD1] cursor-pointer transition-colors group"><div class="text-[11px] text-[#121820] font-medium truncate">WELL-0001 status and NE-8 stops</div><div class="text-[10px] text-[#1F6FD1] font-mono-code">now</div></div><div class="px-2 py-1.5 rounded-[4px] hover:bg-[#EEF1F4] cursor-pointer transition-colors group"><div class="text-[11px] text-[#121820] font-medium truncate group-hover:text-[#1F6FD1] transition-colors">NE-7 downtime, last 4 months</div><div class="text-[10px] text-[#5B6675] font-mono-code">yesterday</div></div><div class="px-2 py-1.5 rounded-[4px] hover:bg-[#EEF1F4] cursor-pointer transition-colors group"><div class="text-[11px] text-[#121820] font-medium truncate group-hover:text-[#1F6FD1] transition-colors">WELL-0164 thermal gun reading</div><div class="text-[10px] text-[#5B6675] font-mono-code">yesterday</div></div><div class="px-2 py-1.5 rounded-[4px] hover:bg-[#EEF1F4] cursor-pointer transition-colors group"><div class="text-[11px] text-[#121820] font-medium truncate group-hover:text-[#1F6FD1] transition-colors">NE-8 spills needing a regulator report</div><div class="text-[10px] text-[#5B6675] font-mono-code">14 Oct</div></div><div class="px-2 py-1.5 rounded-[4px] hover:bg-[#EEF1F4] cursor-pointer transition-colors group"><div class="text-[11px] text-[#121820] font-medium truncate group-hover:text-[#1F6FD1] transition-colors">T350 pump jack RCA rule</div><div class="text-[10px] text-[#5B6675] font-mono-code">12 Oct</div></div></div>
+</div>
+<!-- Divider -->
+<div class="h-px bg-[#D9DEE5] my-1"></div>
+<!-- Memory Nav Item -->
+<div class="mt-2 px-2 py-1.5 rounded-[4px] hover:bg-[#EEF1F4] cursor-pointer transition-colors">
+<div class="flex items-center justify-between">
+<span class="text-[12px] font-medium text-[#121820]">Memory</span>
+<svg class="w-3.5 h-3.5 text-[#5B6675]" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div class="text-[10px] text-[#5B6675] font-mono-code mt-0.5">
+          Shared 42 · Private 6 · Corrections 9
+        </div>
+</div>
+</div>
+<!-- Bottom metadata & Status -->
+<div class="p-3 border-t border-[#D9DEE5] bg-[#FFFFFF] flex flex-col gap-2">
+<div class="text-[10px] text-[#5B6675] font-mono-code leading-normal">
+        200 wells · 4 areas · data to 16 Oct 2026
+      </div>
+<div class="flex items-center justify-between">
+<div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-[4px] bg-[#EEF1F4] border border-[#D9DEE5] text-[10px] font-mono-code text-[#121820]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#1E8A55]"></span>
+<span>Gemma 4 · online</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- MAIN CHAT AREA (centered column ~880px) -->
+<main class="flex-1 h-full flex flex-col items-center justify-between overflow-y-auto px-6 py-6 bg-[#F6F7F9]">
+<!-- Top bar empty / minimal context line -->
+<!-- Center Content: Empty State -->
+<div class="w-full max-w-[880px] mx-auto flex-1 flex flex-col space-y-6 pt-4 pb-8 overflow-y-auto"><div class="flex justify-end"><div class="bg-[#EEF1F4] text-[#121820] rounded-2xl px-5 py-3.5 max-w-[680px] text-[13px] leading-relaxed border border-[#D9DEE5]">Is WELL-0001 producing oil right now? When was it last inspected, and by whom?</div></div><div class="flex flex-col text-left w-full space-y-3"><div class="text-[13px] text-[#121820] leading-relaxed">No. WELL-0001 is not producing: the latest inspection <span class="font-mono-code text-[11px] px-1.5 py-0.5 rounded bg-[#EEF1F4] text-[#1F6FD1] border border-[#D9DEE5] inline-block">[INS-0001-0203]</span> (15 Oct 2026, drone, Ryan Brooks) shows the wellhead only 3.2 °C above air, below the T200 limit of 15 °C. Planned shut-in from 7 Oct per <span class="font-mono-code text-[11px] px-1.5 py-0.5 rounded bg-[#EEF1F4] text-[#1F6FD1] border border-[#D9DEE5] inline-block">[CTX-0001-003]</span> (Jake Morales). Recorded status 'active' is out of date. <span class="font-mono-code text-[11px] px-1.5 py-0.5 rounded bg-[#EEF1F4] text-[#1F6FD1] border border-[#D9DEE5] inline-block">[T200 manual §9.3]</span></div><div class="bg-[#FFFFFF] border border-[#D9DEE5] rounded-[6px] p-4 text-[13px] space-y-3.5"><div class="flex items-center justify-between pb-2.5 border-b border-[#D9DEE5]"><div class="flex items-center gap-2"><span class="font-mono-code font-bold text-[14px] text-[#121820]">WELL-0001</span><span class="text-[11px] text-[#5B6675]">SW-23 Well 001</span></div><span class="inline-flex items-center gap-1.5 bg-red-500/10 border border-red-500/30 text-red-400 font-mono-code text-[11px] px-2.5 py-0.5 rounded"><span class="w-1.5 h-1.5 rounded-full bg-red-400"></span>NOT PRODUCING</span></div><div class="grid grid-cols-2 gap-4 text-[12px]"><div class="space-y-1.5"><div class="flex justify-between text-[#5B6675]"><span>Type</span><span class="text-[#121820] font-mono-code">T200 (rod lift)</span></div><div class="flex justify-between text-[#5B6675]"><span>Area</span><span class="text-[#121820]">Southwest Block 23</span></div><div class="flex justify-between text-[#5B6675]"><span>Team</span><span class="text-[#121820]">Southwest Production</span></div></div><div class="space-y-1.5"><div class="flex justify-between text-[#5B6675]"><span>In charge</span><span class="text-[#121820]">Emily Carter</span></div><div class="flex justify-between text-[#5B6675]"><span>Installed</span><span class="text-[#121820] font-mono-code">25 Mar 2013</span></div><div class="flex justify-between text-[#5B6675]"><span>Location</span><span class="text-[#121820] font-mono-code">31.85425, −102.50232</span></div></div></div><div class="pt-2.5 pb-2.5 border-t border-b border-[#D9DEE5] flex items-center justify-between gap-3 flex-wrap"><div class="flex items-center gap-2 text-[12px]"><span class="text-[#5B6675]">Recorded status:</span><span class="text-[#121820] font-medium">active</span><span class="bg-amber-500/15 text-amber-400 text-[10px] px-1.5 py-0.5 rounded border border-amber-500/30 font-mono-code">out of date</span></div><div class="flex items-center gap-2 text-[12px]"><span class="text-[#5B6675]">Inferred:</span><span class="text-red-400 font-semibold">not producing</span></div><div class="font-mono-code text-[11px] bg-[#EEF1F4] px-2.5 py-1 rounded border border-[#D9DEE5] text-[#5B6675]">Wellhead 25.6 °C · Air 22.4 °C · Δ 3.2 °C &lt; 15 °C</div></div><div class="space-y-2 text-[12px]"><div class="flex items-start gap-1.5"><span class="text-[#5B6675] shrink-0 w-28">Last inspection:</span><div class="text-[#121820]"><span class="font-mono-code text-[#1F6FD1]">[INS-0001-0203]</span> · 15 Oct 2026 09:45 · drone · Ryan Brooks · <span class="italic text-[#121820]">"Pump jack not moving."</span></div></div><div class="flex items-start gap-1.5"><span class="text-[#5B6675] shrink-0 w-28">Downtime:</span><span class="text-red-400 font-medium">14 days since 7 Oct</span></div><div class="flex items-start gap-1.5"><span class="text-[#5B6675] shrink-0 w-28">Open regulator item:</span><span class="font-mono-code text-red-400 bg-red-500/10 border border-red-500/30 px-2 py-0.5 rounded text-[11px]">REG-0001-002 notice of violation · USD 5,000 · OPEN</span></div><div class="flex items-start gap-1.5"><span class="text-[#5B6675] shrink-0 w-28">Last repair:</span><div class="text-[#121820]"><span class="font-mono-code text-[#1F6FD1]">[MNT-0001-032]</span> · 2 Oct 2026 · flowline · <span class="italic text-[#5B6675]">"Replaced leaking flowline section"</span> · USD 5,643</div></div><div class="flex items-start gap-1.5"><span class="text-[#5B6675] shrink-0 w-28">Active note:</span><div class="text-[#121820]"><span class="font-mono-code text-[#1F6FD1]">[CTX-0001-003]</span> · Jake Morales · 8 Oct · <span class="text-emerald-400 font-mono-code text-[10px] bg-emerald-500/10 border border-emerald-500/30 px-1.5 py-0.5 rounded">valid 7–20 Oct</span><div class="text-[#5B6675] italic text-[11px] mt-1">"Shut in from 7 Oct for planned rod string replacement. Expected back around 20 Oct."</div></div></div></div><div class="text-[11px] font-mono-code text-[#5B6675] pt-2 border-t border-[#D9DEE5]">How this was computed: 25.6 − 22.4 = 3.2 °C; T200 needs ≥ 15 °C → not producing. 2 non-producing inspections × 7 days = 14 days.</div></div></div><div class="flex justify-end"><div class="bg-[#EEF1F4] text-[#121820] rounded-2xl px-5 py-3.5 max-w-[680px] text-[13px] leading-relaxed border border-[#D9DEE5]">Which wells in Northeast Block 8 are not producing oil right now, and why?</div></div><div class="flex flex-col text-left w-full space-y-3"><div class="text-[13px] text-[#121820] leading-relaxed">3 wells in Northeast Block 8 are not producing as of the 15 Oct inspections. WELL-0164 is no longer listed: its 15 Oct reading was corrected to 41.0 °C by Michael Turner.</div><div class="bg-[#FFFFFF] border border-[#D9DEE5] rounded-[6px] overflow-hidden"><div class="overflow-x-auto"><table class="w-full text-left text-[12px] font-mono-code"><thead class="bg-[#EEF1F4] text-[#5B6675] text-[10px] uppercase tracking-wider border-b border-[#D9DEE5]"><tr><th class="py-2.5 px-3">Well</th><th class="py-2.5 px-3">Type</th><th class="py-2.5 px-3">Above air</th><th class="py-2.5 px-3">Recorded status</th><th class="py-2.5 px-3 font-sans">Reason</th><th class="py-2.5 px-3">Citations</th></tr></thead><tbody class="divide-y divide-[#D9DEE5]"><tr class="hover:bg-[#EEF1F4]/50 transition-colors"><td class="py-2.5 px-3 font-bold text-[#121820]">WELL-0170</td><td class="py-2.5 px-3 text-[#5B6675]">T200</td><td class="py-2.5 px-3 text-red-400 font-semibold">2.9 °C</td><td class="py-2.5 px-3"><span class="text-red-400 font-sans">down</span></td><td class="py-2.5 px-3 font-sans text-[#5B6675] text-[11px]">Repair MNT-0170-031, walking beam bearing wear, open since 19 Sep</td><td class="py-2.5 px-3 whitespace-nowrap"><span class="text-[#1F6FD1]">[INS-0170-0205]</span> <span class="text-[#1F6FD1]">[MNT-0170-031]</span></td></tr><tr class="hover:bg-[#EEF1F4]/50 transition-colors"><td class="py-2.5 px-3 font-bold text-[#121820]">WELL-0172</td><td class="py-2.5 px-3 text-[#5B6675]">T200</td><td class="py-2.5 px-3 text-red-400 font-semibold">5.7 °C</td><td class="py-2.5 px-3"><span class="font-sans text-[#121820] mr-1">active</span><span class="bg-amber-500/15 text-amber-400 text-[10px] px-1 py-0.5 rounded border border-amber-500/30">out of date</span></td><td class="py-2.5 px-3 font-sans text-[#5B6675] text-[11px]">Repair MNT-0172-028, flowline pinhole leak, open since 3 Oct</td><td class="py-2.5 px-3 whitespace-nowrap"><span class="text-[#1F6FD1]">[INS-0172-0205]</span> <span class="text-[#1F6FD1]">[MNT-0172-028]</span></td></tr><tr class="hover:bg-[#EEF1F4]/50 transition-colors"><td class="py-2.5 px-3 font-bold text-[#121820]">WELL-0175</td><td class="py-2.5 px-3 text-[#5B6675]">T200</td><td class="py-2.5 px-3 text-red-400 font-semibold">0.4 °C</td><td class="py-2.5 px-3"><span class="font-sans text-[#121820] mr-1">active</span><span class="bg-amber-500/15 text-amber-400 text-[10px] px-1 py-0.5 rounded border border-amber-500/30">out of date</span></td><td class="py-2.5 px-3 font-sans text-[#5B6675] text-[11px]">No recorded reason. Suggest a site check.</td><td class="py-2.5 px-3 whitespace-nowrap"><span class="text-[#1F6FD1]">[INS-0175-0205]</span></td></tr></tbody></table></div></div><div class="border border-emerald-500/30 bg-emerald-500/10 rounded-[6px] p-3 flex items-center justify-between text-[11px] font-mono-code text-[#121820]"><div><span class="text-emerald-400 font-semibold mr-2">✓ CORRECTION APPLIED</span>INS-0164-0205 wellhead <span class="line-through text-[#5B6675]">24.0 °C</span> → <span class="text-emerald-400 font-bold">41.0 °C</span> · Michael Turner · faulty handheld thermal gun</div><div class="text-[#5B6675] text-[10px]">scope: this inspection</div></div><div class="text-[11px] font-mono-code text-[#5B6675]">How this was computed: producing if wellhead − air ≥ 15 °C (T200 manual §9.3), latest inspection per well.</div><div class="flex items-center gap-2 pt-1"><button class="inline-flex items-center px-3 py-1.5 rounded-[4px] bg-[#EEF1F4] hover:bg-[#D9DEE5] border border-[#D9DEE5] text-[12px] text-[#121820] transition-colors">+ Show WELL-0175 temperatures</button><button class="inline-flex items-center px-3 py-1.5 rounded-[4px] bg-[#EEF1F4] hover:bg-[#D9DEE5] border border-[#D9DEE5] text-[12px] text-[#121820] transition-colors">+ Repair cost this year for these wells</button></div></div></div>
+<!-- Bottom: Chat Input Section (st.chat_input style) -->
+<div class="w-full max-w-[880px] pb-2">
+<!-- Input container -->
+<div class="w-full bg-[#FFFFFF] border border-[#D9DEE5] rounded-[6px] p-2 flex items-center gap-3 focus-within:border-[#1F6FD1] transition-colors">
+<div class="pl-1.5 text-[#5B6675]">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<input class="flex-1 bg-transparent border-none text-[13px] text-[#121820] placeholder-[#5B6675] focus:outline-none" placeholder="Ask about a well, an area, a spill or a rule…" type="text"/>
+<div class="flex items-center gap-2 pr-1">
+<span class="text-[10px] font-mono-code text-[#64748B] hidden sm:inline">Ctrl+Enter to send</span>
+<!-- Send Button (accent #1F6FD1) -->
+<button class="w-8 h-8 rounded-[4px] bg-[#1F6FD1] text-[#F6F7F9] flex items-center justify-center hover:bg-[#1F6FD1]/90 transition-colors">
+<svg class="w-4 h-4 stroke-[2.5]" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M5 12h14M12 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path>
+</svg>
+</button>
+</div>
+</div>
+<!-- Muted disclaimer text under input -->
+<div class="text-center mt-2 text-[11px] text-[#5B6675] font-normal">
+        Gemma 4 can be wrong. Every number links to its record.
+      </div>
+</div>
+</main>
+</body>
+</html>

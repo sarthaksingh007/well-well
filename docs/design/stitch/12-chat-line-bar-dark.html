@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>WellWise — Copilot Chat Shell</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<style>
+    body {
+      font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #0E1217;
+      color: #E6EAF0;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+    .font-mono-code {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0E1217;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #27313D;
+      border-radius: 2px;
+    }
+  </style>
+</head>
+<body class="bg-[#0E1217] text-[#E6EAF0] flex h-screen w-full overflow-hidden antialiased select-none">
+<!-- LEFT SIDEBAR (264px, surface #151B22, border-r #27313D) -->
+<aside class="w-[264px] min-w-[264px] max-w-[264px] h-full bg-[#151B22] border-r border-[#27313D] flex flex-col justify-between z-20 relative">
+<!-- Top section of sidebar -->
+<div class="flex flex-col p-3 pb-1 overflow-y-auto">
+<!-- Brand Wordmark -->
+<div class="px-1 py-1 mb-3">
+<div class="flex items-center gap-2">
+<span class="inline-block w-2.5 h-2.5 rounded-[2px] bg-[#4C9EEB]"></span>
+<span class="font-semibold text-[15px] tracking-tight text-[#E6EAF0]">Well-Well</span>
+</div>
+<div class="text-[11px] text-[#8A96A6] mt-0.5 tracking-normal">Asset Intelligence Copilot</div>
+</div>
+<!-- Signed In User Picker (Select Box OPEN) -->
+<div class="mb-3">
+<div class="text-[10px] uppercase font-mono-code tracking-wider text-[#8A96A6] mb-1 px-1">Signed in as</div>
+<div class="w-full bg-[#1C242E] border border-[#27313D] rounded-[6px] p-2 flex items-center justify-between cursor-pointer hover:border-[#4C9EEB] transition-colors">
+<div class="flex items-center gap-2 overflow-hidden">
+<div class="w-7 h-7 rounded-[4px] bg-[#27313D] text-[#4C9EEB] font-mono-code text-[11px] font-semibold flex items-center justify-center shrink-0">
+        MT
+      </div>
+<div class="min-w-0 flex flex-col text-left">
+<div class="text-[12px] font-medium text-[#E6EAF0] truncate leading-tight">Michael Turner</div>
+<div class="text-[10px] text-[#8A96A6] truncate leading-tight mt-0.5">Production supervisor · Northeast</div>
+</div>
+</div>
+<svg class="w-3.5 h-3.5 text-[#8A96A6] shrink-0" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+</div>
+<!-- New Chat Button (accent outline) -->
+<button class="w-full flex items-center justify-center gap-2 py-1.5 px-3 rounded-[6px] border border-[#4C9EEB] text-[#4C9EEB] hover:bg-[#4C9EEB]/10 transition-colors text-[12px] font-medium mb-3">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+        New chat
+      </button>
+<!-- Conversations Section -->
+<div class="mb-3">
+<div class="text-[10px] uppercase font-mono-code tracking-wider text-[#8A96A6] mb-1.5 px-1">Conversations</div>
+<div class="space-y-1"><div class="px-2 py-1.5 rounded-[4px] bg-[#1C242E] border border-[#4C9EEB]/40 cursor-pointer transition-colors group flex items-center justify-between">
+<div class="min-w-0 pr-1">
+<div class="text-[11px] text-[#E6EAF0] font-semibold truncate text-[#4C9EEB]">NE-7 downtime, last 4 months</div>
+<div class="text-[10px] text-[#4C9EEB] font-mono-code flex items-center gap-1 mt-0.5">
+<span class="w-1.5 h-1.5 rounded-full bg-[#4C9EEB] inline-block"></span>
+<span>now</span>
+</div>
+</div>
+</div>
+<div class="px-2 py-1.5 rounded-[4px] hover:bg-[#1C242E] cursor-pointer transition-colors group">
+<div class="text-[11px] text-[#E6EAF0] font-medium truncate group-hover:text-[#4C9EEB] transition-colors">WELL-0001 status and NE-8 stops</div>
+<div class="text-[10px] text-[#8A96A6] font-mono-code">yesterday</div>
+</div>
+<div class="px-2 py-1.5 rounded-[4px] hover:bg-[#1C242E] cursor-pointer transition-colors group">
+<div class="text-[11px] text-[#E6EAF0] font-medium truncate group-hover:text-[#4C9EEB] transition-colors">WELL-0164 thermal gun reading</div>
+<div class="text-[10px] text-[#8A96A6] font-mono-code">yesterday</div>
+</div>
+<div class="px-2 py-1.5 rounded-[4px] hover:bg-[#1C242E] cursor-pointer transition-colors group">
+<div class="text-[11px] text-[#E6EAF0] font-medium truncate group-hover:text-[#4C9EEB] transition-colors">NE-8 spills needing a regulator report</div>
+<div class="text-[10px] text-[#8A96A6] font-mono-code">14 Oct</div>
+</div>
+<div class="px-2 py-1.5 rounded-[4px] hover:bg-[#1C242E] cursor-pointer transition-colors group">
+<div class="text-[11px] text-[#E6EAF0] font-medium truncate group-hover:text-[#4C9EEB] transition-colors">T350 pump jack RCA rule</div>
+<div class="text-[10px] text-[#8A96A6] font-mono-code">12 Oct</div>
+</div></div>
+</div>
+<!-- Divider -->
+<div class="h-px bg-[#27313D] my-1"></div>
+<!-- Memory Nav Item -->
+<div class="mt-2 px-2 py-1.5 rounded-[4px] hover:bg-[#1C242E] cursor-pointer transition-colors">
+<div class="flex items-center justify-between">
+<span class="text-[12px] font-medium text-[#E6EAF0]">Memory</span>
+<svg class="w-3.5 h-3.5 text-[#8A96A6]" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div class="text-[10px] text-[#8A96A6] font-mono-code mt-0.5">
+          Shared 42 · Private 6 · Corrections 9
+        </div>
+</div>
+</div>
+<!-- Bottom metadata & Status -->
+<div class="p-3 border-t border-[#27313D] bg-[#151B22] flex flex-col gap-2">
+<div class="text-[10px] text-[#8A96A6] font-mono-code leading-normal">
+        200 wells · 4 areas · data to 16 Oct 2026
+      </div>
+<div class="flex items-center justify-between">
+<div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-[4px] bg-[#1C242E] border border-[#27313D] text-[10px] font-mono-code text-[#E6EAF0]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#3DB57A]"></span>
+<span>Gemma 4 · online</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- MAIN CHAT AREA (centered column ~880px) -->
+<main class="flex-1 h-full flex flex-col items-center justify-between overflow-y-auto px-6 py-6 bg-[#0E1217]">
+<!-- Top bar empty / minimal context line -->
+<!-- Center Content: Empty State -->
+<div class="w-full max-w-[920px] flex flex-col gap-6 py-6 font-display">
+<!-- USER MESSAGE 1 -->
+<div class="flex justify-end">
+<div class="max-w-[680px] bg-[#1C242E] border border-[#27313D] rounded-2xl rounded-tr-sm px-4 py-3 text-[13px] text-[#E6EAF0] leading-relaxed shadow-sm">
+      Show WELL-0001 wellhead temperature against air temperature for the last 13 weeks, and mark when it was not producing.
+    </div>
+</div>
+<!-- ASSISTANT TURN 1 -->
+<div class="flex flex-col gap-3 max-w-[920px]">
+<!-- Metadata / Copilot header -->
+<div class="flex items-center gap-2 text-[11px] text-[#8A96A6] font-mono-code">
+<span class="inline-flex items-center gap-1.5 text-[#4C9EEB] font-semibold">
+<span class="w-2 h-2 rounded-[2px] bg-[#4C9EEB]"></span> Well-Well
+      </span>
+
+<span>·</span>
+<span class="text-[#3DB57A]">13 weekly samples verified</span>
+</div>
+<!-- Main response summary -->
+<div class="text-[13px] text-[#E6EAF0] leading-relaxed font-normal">
+      13 weekly readings, 23 Jul to 15 Oct 2026. <span class="font-mono-code text-[#4C9EEB]">WELL-0001</span> was producing until 1 Oct; on 8 Oct and 15 Oct the wellhead was within 3.2 °C of the air, below the 15 °C T200 limit.
+    </div>
+<!-- Citation chips -->
+<div class="flex flex-wrap items-center gap-2">
+<span class="text-[11px] font-mono-code bg-[#151B22] border border-[#27313D] text-[#4C9EEB] rounded px-2 py-0.5 inline-flex items-center gap-1 hover:border-[#4C9EEB] cursor-pointer transition-colors">
+<svg class="w-3 h-3 text-[#4C9EEB]" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+        [INS-0001-0191…0203]
+      </span>
+<span class="text-[11px] font-mono-code bg-[#151B22] border border-[#27313D] text-[#4C9EEB] rounded px-2 py-0.5 inline-flex items-center gap-1 hover:border-[#4C9EEB] cursor-pointer transition-colors">
+<svg class="w-3 h-3 text-[#4C9EEB]" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+        [T200 manual §9.3]
+      </span>
+</div>
+<!-- LINE CHART CARD -->
+<div class="bg-[#151B22] border border-[#27313D] rounded-[6px] p-4 my-1 shadow-sm">
+<!-- Chart title header & legend -->
+<div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-[#27313D] mb-3">
+<div>
+<div class="font-mono-code text-[11px] font-semibold tracking-wider text-[#E6EAF0] uppercase">
+            WELL-0001 · WELLHEAD VS AIR TEMPERATURE (°C)
+          </div>
+<div class="text-[10px] text-[#8A96A6] mt-0.5">Weekly field thermal gauge · 23 Jul – 15 Oct 2026</div>
+</div>
+<div class="flex items-center gap-4 text-[10px] font-mono-code text-[#8A96A6]">
+<span class="inline-flex items-center gap-1.5">
+<span class="w-3 h-0.5 bg-[#E6EAF0]"></span>
+<span class="text-[#E6EAF0]">Wellhead</span>
+</span>
+<span class="inline-flex items-center gap-1.5">
+<span class="w-3 h-0.5 border-b border-dashed border-[#64748B]"></span>
+<span>Air</span>
+</span>
+<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-[2px] bg-[#E5484D]/20 text-[#FF6369] font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-[#E5484D]"></span>
+            Not producing
+          </span>
+</div>
+</div>
+<!-- SVG Line Chart Graphic -->
+<div class="w-full overflow-x-auto">
+<svg class="w-full h-auto min-w-[700px] select-none" height="240" viewbox="0 0 760 240">
+<!-- Horizontal Gridlines & Y-Axis values -->
+<g stroke="#1C242E" stroke-width="1">
+<line x1="45" x2="740" y1="20" y2="20"></line>
+<line x1="45" x2="740" y1="55" y2="55"></line>
+<line x1="45" x2="740" y1="90" y2="90"></line>
+<line x1="45" x2="740" y1="125" y2="125"></line>
+<line x1="45" x2="740" y1="160" y2="160"></line>
+<line x1="45" x2="740" y1="195" y2="195"></line>
+</g>
+<g fill="#64748B" font-family="JetBrains Mono, monospace" font-size="10" text-anchor="end">
+<text x="38" y="24">60°C</text>
+<text x="38" y="59">50°C</text>
+<text x="38" y="94">40°C</text>
+<text x="38" y="129">30°C</text>
+<text x="38" y="164">20°C</text>
+<text x="38" y="199">10°C</text>
+</g>
+<!-- Not producing highlight zone (weeks 12 & 13) -->
+<rect fill="#E5484D" fill-opacity="0.08" height="175" rx="2" stroke="#E5484D" stroke-dasharray="3 3" stroke-width="1" width="125" x="615" y="20"></rect>
+<text fill="#FF6369" font-family="JetBrains Mono, monospace" font-size="9" font-weight="600" text-anchor="middle" x="678" y="34">NOT PRODUCING (ΔT &lt; 15°C)</text>
+<!-- Margin band / guide line (air + 15°C approx) -->
+<path d="M 65 105 L 120 95 L 175 92 L 230 102 L 285 105 L 340 112 L 395 115 L 450 119 L 505 122 L 560 126 L 615 129 L 670 129 L 725 121" fill="none" opacity="0.5" stroke="#4C9EEB" stroke-dasharray="2 4" stroke-width="1"></path>
+<text fill="#4C9EEB" font-family="JetBrains Mono, monospace" font-size="9" opacity="0.8" x="395" y="108">T200 +15°C margin threshold</text>
+<!-- Air temp dashed line (around 20-30°C) -->
+<!-- Points: (65, 145) (120, 134) (175, 131) (230, 141) (285, 145) (340, 152) (395, 155) (450, 159) (505, 162) (560, 166) (615, 169) (670, 169) (725, 161) -->
+<path d="M 65 145 L 120 134 L 175 131 L 230 141 L 285 145 L 340 152 L 395 155 L 450 159 L 505 162 L 560 166 L 615 169 L 670 169 L 725 161" fill="none" stroke="#64748B" stroke-dasharray="4 3" stroke-width="1.75"></path>
+<!-- Wellhead temp solid line (healthy ~48-51°C, plunging on 08 Oct and 15 Oct) -->
+<!-- Points: (65, 62) (120, 55) (175, 52) (230, 58) (285, 62) (340, 58) (395, 62) (450, 65) (505, 65) (560, 69) (615, 72) (670, 158) (725, 151) -->
+<path d="M 65 62 L 120 55 L 175 52 L 230 58 L 285 62 L 340 58 L 395 62 L 450 65 L 505 65 L 560 69 L 615 72 L 670 158 L 725 151" fill="none" stroke="#E6EAF0" stroke-width="2.5"></path>
+<!-- Normal Wellhead points -->
+<g fill="#E6EAF0">
+<circle cx="65" cy="62" r="3"></circle>
+<circle cx="120" cy="55" r="3"></circle>
+<circle cx="175" cy="52" r="3"></circle>
+<circle cx="230" cy="58" r="3"></circle>
+<circle cx="285" cy="62" r="3"></circle>
+<circle cx="340" cy="58" r="3"></circle>
+<circle cx="395" cy="62" r="3"></circle>
+<circle cx="450" cy="65" r="3"></circle>
+<circle cx="505" cy="65" r="3"></circle>
+<circle cx="560" cy="69" r="3"></circle>
+<circle cx="615" cy="72" r="3"></circle>
+</g>
+<!-- Red abnormal points for 08 Oct and 15 Oct -->
+<circle cx="670" cy="158" fill="#E5484D" r="5" stroke="#0E1217" stroke-width="2"></circle>
+<circle cx="725" cy="151" fill="#E5484D" r="5" stroke="#0E1217" stroke-width="2"></circle>
+<!-- Data callout labels for abnormal points -->
+<g font-family="JetBrains Mono, monospace" font-size="10" font-weight="600">
+<rect fill="#1C242E" height="18" rx="3" stroke="#E5484D" stroke-width="1" width="54" x="643" y="133"></rect>
+<text fill="#FF6369" text-anchor="middle" x="670" y="146">23.4°C</text>
+<rect fill="#1C242E" height="18" rx="3" stroke="#E5484D" stroke-width="1" width="54" x="698" y="126"></rect>
+<text fill="#FF6369" text-anchor="middle" x="725" y="139">25.6°C</text>
+</g>
+<!-- X-Axis Labels -->
+<g fill="#8A96A6" font-family="JetBrains Mono, monospace" font-size="9" text-anchor="middle">
+<text x="65" y="214">23 Jul</text>
+<text x="120" y="214">30 Jul</text>
+<text x="175" y="214">06 Aug</text>
+<text x="230" y="214">13 Aug</text>
+<text x="285" y="214">20 Aug</text>
+<text x="340" y="214">27 Aug</text>
+<text x="395" y="214">03 Sep</text>
+<text x="450" y="214">10 Sep</text>
+<text x="505" y="214">17 Sep</text>
+<text x="560" y="214">24 Sep</text>
+<text x="615" y="214">01 Oct</text>
+<text fill="#FF6369" font-weight="600" x="670" y="214">08 Oct</text>
+<text fill="#FF6369" font-weight="600" x="725" y="214">15 Oct</text>
+</g>
+</svg>
+</div>
+<!-- Chart Footer -->
+<div class="mt-3 pt-2 border-t border-[#27313D] flex flex-wrap items-center justify-between text-[11px] text-[#8A96A6]">
+<div class="font-mono-code text-[10px]">
+          How this was computed: producing when wellhead − air ≥ 15 °C; 2 of 13 readings below → 2 × 7 = 14 days down.
+        </div>
+<button class="inline-flex items-center gap-1 text-[#4C9EEB] hover:underline font-mono-code text-[11px]">
+<span>View data · 13 rows</span>
+<svg class="w-3 h-3" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M14 5l7 7m0 0l-7 7m7-7H3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</button>
+</div>
+</div>
+</div>
+<!-- USER MESSAGE 2 -->
+<div class="flex justify-end pt-2">
+<div class="max-w-[680px] bg-[#1C242E] border border-[#27313D] rounded-2xl rounded-tr-sm px-4 py-3 text-[13px] text-[#E6EAF0] leading-relaxed shadow-sm">
+      Which 3 wells in Northeast Block 7 had the most downtime in the last 4 months?
+    </div>
+</div>
+<!-- ASSISTANT TURN 2 -->
+<div class="flex flex-col gap-3 max-w-[920px]">
+<!-- Metadata / Header -->
+<div class="flex items-center gap-2 text-[11px] text-[#8A96A6] font-mono-code">
+<span class="inline-flex items-center gap-1.5 text-[#4C9EEB] font-semibold">
+<span class="w-2 h-2 rounded-[2px] bg-[#4C9EEB]"></span> Well-Well
+      </span>
+
+<span>·</span>
+<span>Window: 16 Jun – 16 Oct 2026 (122d)</span>
+</div>
+<!-- Summary answer -->
+<div class="text-[13px] text-[#E6EAF0] leading-relaxed">
+<span class="font-semibold text-[#E6EAF0]">WELL-0121</span> had the most downtime: <strong class="text-[#4C9EEB] font-mono-code font-semibold">49 days</strong>. <span class="font-semibold text-[#E6EAF0]">WELL-0138</span> and <span class="font-semibold text-[#E6EAF0]">WELL-0107</span> follow with <strong class="text-[#4C9EEB] font-mono-code font-semibold">42 days</strong> each. Next is <span class="text-[#8A96A6]">WELL-0119</span> at 28.
+    </div>
+<!-- Citation chips -->
+<div class="flex flex-wrap items-center gap-2">
+<span class="text-[11px] font-mono-code bg-[#151B22] border border-[#27313D] text-[#4C9EEB] rounded px-2 py-0.5 inline-flex items-center gap-1 hover:border-[#4C9EEB] cursor-pointer transition-colors">
+        [INS-0121-*]
+      </span>
+<span class="text-[11px] font-mono-code bg-[#151B22] border border-[#27313D] text-[#4C9EEB] rounded px-2 py-0.5 inline-flex items-center gap-1 hover:border-[#4C9EEB] cursor-pointer transition-colors">
+        [INS-0138-*]
+      </span>
+<span class="text-[11px] font-mono-code bg-[#151B22] border border-[#27313D] text-[#4C9EEB] rounded px-2 py-0.5 inline-flex items-center gap-1 hover:border-[#4C9EEB] cursor-pointer transition-colors">
+        [INS-0107-*]
+      </span>
+</div>
+<!-- BAR CHART CARD -->
+<div class="bg-[#151B22] border border-[#27313D] rounded-[6px] p-4 my-1 shadow-sm">
+<!-- Title & legend -->
+<div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-[#27313D] mb-4">
+<div>
+<div class="font-mono-code text-[11px] font-semibold tracking-wider text-[#E6EAF0] uppercase">
+            DOWNTIME DAYS · NORTHEAST BLOCK 7 · 16 JUN – 16 OCT 2026
+          </div>
+<div class="text-[10px] text-[#8A96A6] mt-0.5">Top downtime contributors (inspections not producing × 7d)</div>
+</div>
+<div class="flex items-center gap-3 text-[10px] font-mono-code text-[#8A96A6]">
+<span class="inline-flex items-center gap-1.5">
+<span class="w-3 h-2 rounded-[2px] bg-[#4C9EEB]"></span>
+<span class="text-[#E6EAF0]">Top 3 ranking</span>
+</span>
+<span class="inline-flex items-center gap-1.5">
+<span class="w-3 h-2 rounded-[2px] bg-[#64748B]"></span>
+<span>Context (4th)</span>
+</span>
+</div>
+</div>
+<!-- Bars list -->
+<div class="space-y-3">
+<!-- Row 1: WELL-0121 -->
+<div class="flex items-center gap-3 text-[12px]">
+<div class="w-24 shrink-0 flex items-center justify-between font-mono-code">
+<span class="font-semibold text-[#E6EAF0]">WELL-0121</span>
+<span class="text-[9px] px-1 py-0.2 rounded bg-[#1C242E] text-[#8A96A6] border border-[#27313D]">T200</span>
+</div>
+<div class="flex-1 bg-[#1C242E] h-5 rounded-[2px] overflow-hidden flex items-center p-0.5 relative">
+<div class="bg-[#64748B] h-full rounded-[2px] transition-all" style="width: 81.6%;"></div>
+</div>
+<div class="w-16 shrink-0 text-right font-mono-code">
+<span class="text-[#E6EAF0] font-semibold text-[13px]">49</span> <span class="text-[10px] text-[#8A96A6]">days</span>
+</div>
+</div>
+<!-- Row 2: WELL-0138 -->
+<div class="flex items-center gap-3 text-[12px]">
+<div class="w-24 shrink-0 flex items-center justify-between font-mono-code">
+<span class="font-semibold text-[#E6EAF0]">WELL-0138</span>
+<span class="text-[9px] px-1 py-0.2 rounded bg-[#1C242E] text-[#8A96A6] border border-[#27313D]">T350</span>
+</div>
+<div class="flex-1 bg-[#1C242E] h-5 rounded-[2px] overflow-hidden flex items-center p-0.5 relative">
+<div class="bg-[#64748B] h-full rounded-[2px] transition-all" style="width: 70%;"></div>
+</div>
+<div class="w-16 shrink-0 text-right font-mono-code">
+<span class="text-[#E6EAF0] font-semibold text-[13px]">42</span> <span class="text-[10px] text-[#8A96A6]">days</span>
+</div>
+</div>
+<!-- Row 3: WELL-0107 -->
+<div class="flex items-center gap-3 text-[12px]">
+<div class="w-24 shrink-0 flex items-center justify-between font-mono-code">
+<span class="font-semibold text-[#E6EAF0]">WELL-0107</span>
+<span class="text-[9px] px-1 py-0.2 rounded bg-[#1C242E] text-[#8A96A6] border border-[#27313D]">T350</span>
+</div>
+<div class="flex-1 bg-[#1C242E] h-5 rounded-[2px] overflow-hidden flex items-center p-0.5 relative">
+<div class="bg-[#64748B] h-full rounded-[2px] transition-all" style="width: 70%;"></div>
+</div>
+<div class="w-16 shrink-0 text-right font-mono-code">
+<span class="text-[#E6EAF0] font-semibold text-[13px]">42</span> <span class="text-[10px] text-[#8A96A6]">days</span>
+</div>
+</div>
+<!-- Row 4: WELL-0119 (context) -->
+<div class="flex items-center gap-3 text-[12px]">
+<div class="w-24 shrink-0 flex items-center justify-between font-mono-code text-[#8A96A6]">
+<span>WELL-0119</span>
+<span class="text-[9px] px-1 py-0.2 rounded bg-[#1C242E] text-[#64748B] border border-[#27313D]">T200</span>
+</div>
+<div class="flex-1 bg-[#1C242E] h-5 rounded-[2px] overflow-hidden flex items-center p-0.5 relative">
+<div class="bg-[#64748B] h-full rounded-[2px] transition-all" style="width: 46.6%;"></div>
+</div>
+<div class="w-16 shrink-0 text-right font-mono-code text-[#8A96A6]">
+<span class="font-medium text-[12px]">28</span> <span class="text-[10px] text-[#64748B]">days</span>
+</div>
+</div>
+</div>
+<!-- X-axis scale indicators -->
+<div class="mt-3 pt-2 border-t border-[#27313D] flex justify-between pl-27 text-[9px] font-mono-code text-[#64748B]">
+<span>0d</span>
+<span>15d</span>
+<span>30d</span>
+<span>45d</span>
+<span>60d</span>
+</div>
+<!-- Calculation callout note -->
+<div class="mt-3 p-2 rounded-[4px] bg-[#1C242E]/70 border border-[#27313D] text-[10px] text-[#8A96A6] font-mono-code">
+        How this was computed: downtime = non-producing inspections × 7 days. WELL-0121: 7 × 7 = 49. Missed inspections add nothing.
+      </div>
+</div>
+<!-- Follow-up suggestion pills -->
+<div class="flex flex-wrap items-center gap-2 pt-1">
+<button class="px-2.5 py-1 rounded-full bg-[#151B22] border border-[#27313D] text-[#8A96A6] hover:text-[#4C9EEB] hover:border-[#4C9EEB] transition-colors text-[11px] font-medium flex items-center gap-1">
+<span class="text-[#4C9EEB]">+</span> What have repairs cost on these 3 wells this year?
+      </button>
+<button class="px-2.5 py-1 rounded-full bg-[#151B22] border border-[#27313D] text-[#8A96A6] hover:text-[#4C9EEB] hover:border-[#4C9EEB] transition-colors text-[11px] font-medium flex items-center gap-1">
+<span class="text-[#4C9EEB]">+</span> Why was WELL-0121 down?
+      </button>
+<button class="px-2.5 py-1 rounded-full bg-[#151B22] border border-[#27313D] text-[#8A96A6] hover:text-[#4C9EEB] hover:border-[#4C9EEB] transition-colors text-[11px] font-medium flex items-center gap-1">
+<span class="text-[#4C9EEB]">+</span> Show as table
+      </button>
+</div>
+</div>
+</div>
+<!-- Bottom: Chat Input Section (st.chat_input style) -->
+<div class="w-full max-w-[880px] pb-2">
+<!-- Input container -->
+<div class="w-full bg-[#151B22] border border-[#27313D] rounded-[6px] p-2 flex items-center gap-3 focus-within:border-[#4C9EEB] transition-colors">
+<div class="pl-1.5 text-[#8A96A6]">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<input class="flex-1 bg-transparent border-none text-[13px] text-[#E6EAF0] placeholder-[#8A96A6] focus:outline-none" placeholder="Ask about a well, downtime, inspection finding, or regulatory rule…" type="text"/>
+<div class="flex items-center gap-2 pr-1">
+<span class="text-[10px] font-mono-code text-[#64748B] hidden sm:inline">Ctrl+Enter to send</span>
+<!-- Send Button (accent #4C9EEB) -->
+<button class="w-8 h-8 rounded-[4px] bg-[#4C9EEB] text-[#0E1217] flex items-center justify-center hover:bg-[#4C9EEB]/90 transition-colors">
+<svg class="w-4 h-4 stroke-[2.5]" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M5 12h14M12 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path>
+</svg>
+</button>
+</div>
+</div>
+<!-- Muted disclaimer text under input -->
+<div class="text-center mt-2 text-[11px] text-[#8A96A6] font-normal">Gemma 4 can be wrong. Every number links to its record.</div>
+</div>
+</main>
+</body>
+</html>

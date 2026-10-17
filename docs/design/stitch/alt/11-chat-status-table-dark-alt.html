@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Well-Well — Asset Intelligence Copilot</title>
+  <!-- Google Fonts: IBM Plex Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            bg: '#0E1217',
+            surface: '#151B22',
+            'surface-2': '#1C242E',
+            border: '#27313D',
+            text: '#E6EAF0',
+            'text-muted': '#8A96A6',
+            accent: '#4C9EEB',
+            'status-red': '#E5484D',
+            'status-amber': '#F2A93B',
+            'status-green': '#3DB57A',
+            'status-slate': '#64748B',
+          },
+          fontFamily: {
+            sans: ['"IBM Plex Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          borderRadius: {
+            card: '6px',
+            chip: '4px',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Exact custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0E1217;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #27313D;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #374556;
+    }
+    /* Streamlit-like clean lines, strictly no box-shadows, no gradients */
+    * {
+      box-shadow: none !important;
+    }
+  </style>
+</head>
+<body class="bg-[#0E1217] text-[#E6EAF0] font-sans antialiased h-screen w-screen flex overflow-hidden selection:bg-[#4C9EEB]/20 selection:text-[#4C9EEB]">
+
+  <!-- SIDEBAR (Streamlit st.sidebar aesthetic: 264px fixed, #151B22, border-r #27313D) -->
+  <aside class="w-[264px] min-w-[264px] max-w-[264px] h-full bg-[#151B22] border-r border-[#27313D] flex flex-col justify-between select-none z-20">
+    
+    <!-- Top section -->
+    <div class="flex flex-col p-4 overflow-y-auto">
+      
+      <!-- Brand Wordmark & Caption -->
+      <div class="mb-4">
+        <div class="flex items-center gap-2">
+          <div class="w-2.5 h-2.5 rounded-[2px] bg-[#4C9EEB]"></div>
+          <span class="text-[17px] font-bold tracking-tight text-[#E6EAF0]">Well-Well</span>
+        </div>
+        <p class="text-[11px] font-normal text-[#8A96A6] mt-0.5 tracking-normal">Asset Intelligence Copilot</p>
+      </div>
+
+      <!-- User Picker (Closed state as specified) -->
+      <div class="mb-3">
+        <div class="text-[10px] uppercase font-mono tracking-wider text-[#8A96A6] mb-1.5 font-semibold">Signed in as</div>
+        <div class="bg-[#1C242E] border border-[#27313D] rounded-[6px] p-2 flex items-center justify-between cursor-pointer hover:border-[#4C9EEB]/40 transition-colors">
+          <div class="flex items-center gap-2.5 overflow-hidden">
+            <div class="w-6 h-6 rounded-[4px] bg-[#27313D] text-[#4C9EEB] font-mono text-[11px] font-bold flex items-center justify-center shrink-0">
+              MT
+            </div>
+            <div class="truncate leading-tight">
+              <div class="text-[12px] font-medium text-[#E6EAF0] truncate">Michael Turner</div>
+              <div class="text-[10px] text-[#8A96A6] truncate">Production supervisor · Northeast</div>
+            </div>
+          </div>
+          <svg class="w-3.5 h-3.5 text-[#8A96A6] shrink-0 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </div>
+      </div>
+
+      <!-- New Chat Button -->
+      <button class="w-full mb-5 py-1.5 px-3 rounded-[6px] border border-[#4C9EEB] text-[#4C9EEB] bg-transparent hover:bg-[#4C9EEB]/10 font-medium text-[12px] flex items-center justify-center gap-1.5 transition-colors">
+        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>
+        <span>New chat</span>
+      </button>
+
+      <!-- Conversations List -->
+      <div class="space-y-1 mb-5">
+        <div class="text-[10px] uppercase font-mono tracking-wider text-[#8A96A6] mb-2 font-semibold">Conversations</div>
+        
+        <!-- Conversation 1 (Active/Selected) -->
+        <div class="p-2 rounded-[6px] bg-[#1C242E] border border-[#27313D] text-left cursor-pointer">
+          <div class="text-[12px] font-medium text-[#E6EAF0] truncate">WELL-0001 status and NE-8 stops</div>
+          <div class="text-[10px] font-mono text-[#4C9EEB] mt-0.5">now</div>
+        </div>
+
+        <!-- Conversation 2 -->
+        <div class="p-2 rounded-[6px] hover:bg-[#1C242E]/50 text-left cursor-pointer transition-colors">
+          <div class="text-[12px] font-normal text-[#E6EAF0]/80 truncate">NE-7 downtime, last 4 months</div>
+          <div class="text-[10px] font-mono text-[#8A96A6] mt-0.5">yesterday</div>
+        </div>
+
+        <!-- Conversation 3 -->
+        <div class="p-2 rounded-[6px] hover:bg-[#1C242E]/50 text-left cursor-pointer transition-colors">
+          <div class="text-[12px] font-normal text-[#E6EAF0]/80 truncate">NE-8 spills needing a regulator report</div>
+          <div class="text-[10px] font-mono text-[#8A96A6] mt-0.5">14 Oct</div>
+        </div>
+      </div>
+
+      <!-- Memory Navigation -->
+      <div class="pt-2 border-t border-[#27313D]">
+        <div class="p-2 rounded-[6px] hover:bg-[#1C242E] cursor-pointer flex items-center justify-between group transition-colors">
+          <div>
+            <div class="text-[12px] font-medium text-[#E6EAF0] flex items-center gap-1.5">
+              <span>Memory</span>
+            </div>
+            <div class="text-[10px] font-mono text-[#8A96A6] mt-0.5">Shared 42 · Private 6 · Corrections 9</div>
+          </div>
+          <svg class="w-3.5 h-3.5 text-[#8A96A6] group-hover:text-[#E6EAF0] transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Sidebar Bottom Status & Metadata -->
+    <div class="p-4 border-t border-[#27313D] text-[11px] bg-[#151B22]">
+      <div class="text-[#8A96A6] font-mono text-[10px] mb-2.5 leading-relaxed">
+        200 wells · 4 areas · data to 16 Oct 2026
+      </div>
+      <div class="flex items-center justify-between">
+        <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#1C242E] border border-[#27313D] text-[10px] font-mono text-[#E6EAF0]">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#3DB57A]"></span>
+          <span>Gemma 4 · online</span>
+        </div>
+        <span class="text-[10px] font-mono text-[#8A96A6]">v2.4-stream</span>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- MAIN CHAT AREA (Streamlit style centered ~920px column) -->
+  <main class="flex-1 flex flex-col h-full bg-[#0E1217] overflow-hidden relative">
+
+    <!-- Top Status Header Strip (Subtle metadata, no invented metrics) -->
+    <header class="h-10 border-b border-[#27313D] px-6 flex items-center justify-between text-[11px] font-mono text-[#8A96A6] select-none shrink-0 bg-[#0E1217]">
+      <div class="flex items-center gap-4">
+        <span>WORKSPACE: <span class="text-[#E6EAF0]">NORTHEAST_PROD</span></span>
+        <span class="text-[#27313D]">|</span>
+        <span>SESSION: <span class="text-[#3DB57A]">ACTIVE</span></span>
+      </div>
+      <div class="flex items-center gap-3">
+        <span>LATENCY: <span class="text-[#3DB57A]">18ms</span></span>
+        <span class="text-[#27313D]">|</span>
+        <span class="text-[#4C9EEB] hover:underline cursor-pointer">Clear conversation</span>
+      </div>
+    </header>
+
+    <!-- Scrollable Chat Column (~920px max width centered) -->
+    <div class="flex-1 overflow-y-auto px-6 py-6 flex flex-col items-center">
+      <div class="w-full max-w-[920px] flex flex-col gap-6 pb-4">
+
+        <!-- ================= TURN 1: WELL-0001 STATUS & INSPECTION ================= -->
+
+        <!-- User Message Bubble (Right aligned) -->
+        <div class="flex justify-end w-full">
+          <div class="bg-[#1C242E] border border-[#27313D] rounded-[6px] px-4 py-2.5 max-w-[680px] text-[13px] leading-relaxed text-[#E6EAF0]">
+            Is WELL-0001 producing oil right now? When was it last inspected, and by whom?
+          </div>
+        </div>
+
+        <!-- Assistant Turn (Left aligned / full width within chat container) -->
+        <div class="w-full flex flex-col gap-3">
+          
+          <!-- Assistant Text Response with Citation Chips -->
+          <div class="text-[13.5px] leading-relaxed text-[#E6EAF0]">
+            No. WELL-0001 is not producing: the latest inspection 
+            <span class="inline-flex items-center px-1.5 py-0.5 rounded-[4px] bg-[#1C242E] border border-[#27313D] text-[#4C9EEB] font-mono text-[11px] font-medium mx-0.5 hover:border-[#4C9EEB] cursor-pointer transition-colors">[INS-0001-0203]</span> 
+            (15 Oct 2026, drone, Ryan Brooks) shows the wellhead only 3.2 °C above air, below the T200 limit of 15 °C 
+            <span class="inline-flex items-center px-1.5 py-0.5 rounded-[4px] bg-[#1C242E] border border-[#27313D] text-[#4C9EEB] font-mono text-[11px] font-medium mx-0.5 hover:border-[#4C9EEB] cursor-pointer transition-colors">[T200 manual §9.3]</span>. 
+            Planned shut-in from 7 Oct per 
+            <span class="inline-flex items-center px-1.5 py-0.5 rounded-[4px] bg-[#1C242E] border border-[#27313D] text-[#4C9EEB] font-mono text-[11px] font-medium mx-0.5 hover:border-[#4C9EEB] cursor-pointer transition-colors">[CTX-0001-003]</span> 
+            (Jake Morales). Recorded status 'active' is out of date.
+          </div>
+
+          <!-- GENERATIVE UI: WELL STATUS CARD (Bordered surface #151B22, 6px radii) -->
+          <div class="bg-[#151B22] border border-[#27313D] rounded-[6px] overflow-hidden text-[12px]">
+            
+            <!-- Card Header Row -->
+            <div class="p-3.5 border-b border-[#27313D] bg-[#1C242E]/50 flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <span class="font-mono text-[16px] font-bold text-[#E6EAF0] tracking-tight">WELL-0001</span>
+                <span class="text-[#8A96A6] text-[13px] font-medium">SW-23 Well 001</span>
+              </div>
+              <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[4px] bg-[#E5484D]/10 border border-[#E5484D] text-[#E5484D] font-mono text-[11px] font-bold uppercase tracking-wider">
+                <span class="w-1.5 h-1.5 rounded-full bg-[#E5484D]"></span>
+                <span>NOT PRODUCING</span>
+              </div>
+            </div>
+
+            <!-- Two-Column Key/Value Grid Inside -->
+            <div class="p-4 grid grid-cols-2 gap-x-8 gap-y-3.5 border-b border-[#27313D]">
+              
+              <!-- Left Column: Core Specs -->
+              <div class="space-y-2">
+                <div class="flex items-baseline justify-between py-0.5 border-b border-[#27313D]/40">
+                  <span class="text-[#8A96A6]">Type</span>
+                  <span class="font-mono text-[#E6EAF0]">T200 (rod lift)</span>
+                </div>
+                <div class="flex items-baseline justify-between py-0.5 border-b border-[#27313D]/40">
+                  <span class="text-[#8A96A6]">Area</span>
+                  <span class="font-sans text-[#E6EAF0]">Southwest Block 23</span>
+                </div>
+                <div class="flex items-baseline justify-between py-0.5 border-b border-[#27313D]/40">
+                  <span class="text-[#8A96A6]">Team</span>
+                  <span class="font-sans text-[#E6EAF0]">Southwest Production</span>
+                </div>
+              </div>
+
+              <!-- Right Column: People, Install, Geo -->
+              <div class="space-y-2">
+                <div class="flex items-baseline justify-between py-0.5 border-b border-[#27313D]/40">
+                  <span class="text-[#8A96A6]">In charge</span>
+                  <span class="font-medium text-[#E6EAF0]">Emily Carter</span>
+                </div>
+                <div class="flex items-baseline justify-between py-0.5 border-b border-[#27313D]/40">
+                  <span class="text-[#8A96A6]">Installed</span>
+                  <span class="font-mono text-[#E6EAF0]">25 Mar 2013</span>
+                </div>
+                <div class="flex items-baseline justify-between py-0.5 border-b border-[#27313D]/40">
+                  <span class="text-[#8A96A6]">Location</span>
+                  <span class="font-mono text-[#E6EAF0]">31.85425, −102.50232</span>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Status Discrepancy & Thermal Row -->
+            <div class="p-3.5 bg-[#1C242E]/30 border-b border-[#27313D] flex flex-wrap items-center justify-between gap-3">
+              <div class="flex items-center gap-3">
+                <div class="flex items-center gap-1.5">
+                  <span class="text-[#8A96A6]">Recorded status:</span>
+                  <span class="font-mono text-[#E6EAF0]">active</span>
+                  <span class="px-1.5 py-0.5 rounded-[4px] bg-[#F2A93B]/10 border border-[#F2A93B] text-[#F2A93B] font-mono text-[10px] font-semibold">out of date</span>
+                </div>
+                <span class="text-[#27313D]">|</span>
+                <div class="flex items-center gap-1.5">
+                  <span class="text-[#8A96A6]">Inferred:</span>
+                  <span class="font-mono text-[#E5484D] font-bold">not producing</span>
+                </div>
+              </div>
+              <!-- Thermal delta readout -->
+              <div class="font-mono text-[11px] bg-[#0E1217] border border-[#27313D] px-2.5 py-1 rounded-[4px] text-[#E6EAF0]">
+                Wellhead <span class="text-[#E6EAF0] font-semibold">25.6 °C</span> · Air <span class="text-[#8A96A6]">22.4 °C</span> · <span class="text-[#E5484D] font-semibold">Δ 3.2 °C &lt; 15 °C</span>
+              </div>
+            </div>
+
+            <!-- Detailed Operational Rows -->
+            <div class="p-4 space-y-3 border-b border-[#27313D] text-[12px]">
+              
+              <!-- Last inspection -->
+              <div class="flex items-start justify-between gap-4">
+                <div class="text-[#8A96A6] shrink-0 w-28">Last inspection</div>
+                <div class="flex-1 font-mono text-[#E6EAF0] text-right">
+                  <span class="text-[#4C9EEB] cursor-pointer hover:underline">[INS-0001-0203]</span> · 15 Oct 2026 09:45 · drone · <span class="font-sans text-[#E6EAF0]">Ryan Brooks</span> · note: <span class="text-[#8A96A6] font-sans">"Pump jack not moving."</span>
+                </div>
+              </div>
+
+              <!-- Downtime -->
+              <div class="flex items-start justify-between gap-4">
+                <div class="text-[#8A96A6] shrink-0 w-28">Downtime</div>
+                <div class="flex-1 font-mono text-[#E6EAF0] text-right">
+                  <span class="text-[#E5484D] font-semibold">14 days</span> since 7 Oct <span class="text-[#8A96A6] font-sans text-[11px]">(computed from consecutive non-producing drone passes)</span>
+                </div>
+              </div>
+
+              <!-- Open spills / regulator -->
+              <div class="flex items-start justify-between gap-4">
+                <div class="text-[#8A96A6] shrink-0 w-28">Open regulator</div>
+                <div class="flex-1 text-right">
+                  <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-[4px] bg-[#E5484D]/10 border border-[#E5484D] text-[#E5484D] font-mono text-[11px]">
+                    <span class="font-bold">REG-0001-002</span> notice of violation · USD 5,000 · <span class="uppercase font-semibold">open</span>
+                  </span>
+                </div>
+              </div>
+
+              <!-- Last repair -->
+              <div class="flex items-start justify-between gap-4">
+                <div class="text-[#8A96A6] shrink-0 w-28">Last repair</div>
+                <div class="flex-1 font-mono text-[#E6EAF0] text-right">
+                  <span class="text-[#4C9EEB] cursor-pointer hover:underline">[MNT-0001-032]</span> · 2 Oct 2026 · flowline · <span class="font-sans text-[#8A96A6]">"Replaced leaking flowline section"</span> · <span class="text-[#E6EAF0] font-semibold">USD 5,643</span>
+                </div>
+              </div>
+
+              <!-- Active shared notes -->
+              <div class="flex items-start justify-between gap-4 pt-1">
+                <div class="text-[#8A96A6] shrink-0 w-28">Active note</div>
+                <div class="flex-1 bg-[#1C242E] p-2.5 rounded-[4px] border border-[#27313D] text-[11.5px] leading-normal text-left">
+                  <div class="flex items-center justify-between font-mono text-[11px] text-[#8A96A6] mb-1">
+                    <span><strong class="text-[#4C9EEB]">[CTX-0001-003]</strong> · Jake Morales · 8 Oct</span>
+                    <span class="text-[#3DB57A]">valid 7–20 Oct</span>
+                  </div>
+                  <div class="text-[#E6EAF0] font-sans">
+                    "Shut in from 7 Oct for planned rod string replacement. Expected back around 20 Oct."
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Equipment Strip Mono -->
+            <div class="px-4 py-2.5 bg-[#0E1217] border-b border-[#27313D] flex items-center gap-2 overflow-x-auto text-[11px] font-mono text-[#8A96A6]">
+              <span class="text-[#E6EAF0] font-semibold uppercase text-[10px] tracking-wider shrink-0">EQUIPMENT:</span>
+              <span class="px-1.5 py-0.5 rounded-[4px] bg-[#1C242E] border border-[#27313D] text-[#E6EAF0] shrink-0">WH-3000 wellhead</span>
+              <span class="text-[#27313D]">·</span>
+              <span class="px-1.5 py-0.5 rounded-[4px] bg-[#1C242E] border border-[#27313D] text-[#E6EAF0] shrink-0">PJ-228 pump jack</span>
+              <span class="text-[#27313D]">·</span>
+              <span class="px-1.5 py-0.5 rounded-[4px] bg-[#1C242E] border border-[#27313D] text-[#E6EAF0] shrink-0">rod string API Grade D 7/8 in</span>
+              <span class="text-[#27313D]">·</span>
+              <span class="px-1.5 py-0.5 rounded-[4px] bg-[#1C242E] border border-[#27313D] text-[#E6EAF0] shrink-0">insert rod pump 1.75 in</span>
+              <span class="text-[#27313D]">·</span>
+              <span class="px-1.5 py-0.5 rounded-[4px] bg-[#1C242E] border border-[#27313D] text-[#E6EAF0] shrink-0">3 in carbon steel flowline</span>
+            </div>
+
+            <!-- Footer: How this was computed -->
+            <div class="px-4 py-2.5 bg-[#151B22] text-[11px] text-[#8A96A6] flex items-center justify-between">
+              <div>
+                <span class="font-medium text-[#E6EAF0]">How this was computed:</span> 
+                <span class="font-mono text-[#8A96A6] ml-1">Δ = 25.6 − 22.4 = 3.2 °C; T200 rule needs ≥ 15 °C → not producing. 2 non-producing inspections × 7 days = 14 days.</span>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- ================= TURN 2: NE-8 WELLS & GENERATIVE UI TABLE ================= -->
+
+        <!-- Second User Bubble (Right aligned) -->
+        <div class="flex justify-end w-full pt-4">
+          <div class="bg-[#1C242E] border border-[#27313D] rounded-[6px] px-4 py-2.5 max-w-[680px] text-[13px] leading-relaxed text-[#E6EAF0]">
+            Which wells in Northeast Block 8 are not producing oil right now, and why?
+          </div>
+        </div>
+
+        <!-- Assistant Turn 2 -->
+        <div class="w-full flex flex-col gap-3">
+          
+          <!-- Assistant Text Response -->
+          <div class="text-[13.5px] leading-relaxed text-[#E6EAF0]">
+            3 wells in Northeast Block 8 are not producing as of the 15 Oct inspections. 
+            <span class="font-mono font-medium text-[#E6EAF0]">WELL-0164</span> is no longer listed: its 15 Oct reading was corrected to 41.0 °C by Michael Turner.
+          </div>
+
+          <!-- GENERATIVE UI: STREAMLIT DATAFRAME TABLE (Mono cells, st.dataframe look) -->
+          <div class="bg-[#151B22] border border-[#27313D] rounded-[6px] overflow-hidden">
+            
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse text-[12px]">
+                <thead>
+                  <tr class="bg-[#1C242E] border-b border-[#27313D] text-[11px] font-mono text-[#8A96A6] uppercase tracking-wider">
+                    <th class="py-2.5 px-3.5 font-semibold">Well</th>
+                    <th class="py-2.5 px-3 font-semibold">Type</th>
+                    <th class="py-2.5 px-3 font-semibold">Wellhead above air</th>
+                    <th class="py-2.5 px-3.5 font-semibold">Recorded status</th>
+                    <th class="py-2.5 px-3.5 font-semibold">Reason</th>
+                    <th class="py-2.5 px-3.5 font-semibold text-right">Citations</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-[#27313D] font-mono text-[12px]">
+                  
+                  <!-- Row 1: WELL-0170 -->
+                  <tr class="hover:bg-[#1C242E]/50 transition-colors">
+                    <td class="py-3 px-3.5 font-bold text-[#E6EAF0]">WELL-0170</td>
+                    <td class="py-3 px-3 text-[#8A96A6]">T200</td>
+                    <td class="py-3 px-3">
+                      <span class="text-[#E5484D] font-semibold">2.9 °C</span> 
+                      <span class="text-[10px] text-[#8A96A6] font-sans">(&lt; 15 °C)</span>
+                    </td>
+                    <td class="py-3 px-3.5">
+                      <span class="inline-flex items-center px-1.5 py-0.5 rounded-[4px] bg-[#E5484D]/10 border border-[#E5484D] text-[#E5484D] text-[10.5px] uppercase font-bold">down</span>
+                    </td>
+                    <td class="py-3 px-3.5 font-sans text-[#E6EAF0] max-w-[320px] leading-tight">
+                      Repair <span class="font-mono text-[#4C9EEB]">[MNT-0170-031]</span>, walking beam bearing wear, open since 19 Sep
+                    </td>
+                    <td class="py-3 px-3.5 text-right whitespace-nowrap">
+                      <span class="inline-flex items-center px-1.5 py-0.5 rounded-[4px] bg-[#1C242E] border border-[#27313D] text-[#4C9EEB] text-[10.5px] mr-1 hover:border-[#4C9EEB] cursor-pointer">[INS-0170-0205]</span>
+                      <span class="inline-flex items-center px-1.5 py-0.5 rounded-[4px] bg-[#1C242E] border border-[#27313D] text-[#4C9EEB] text-[10.5px] hover:border-[#4C9EEB] cursor-pointer">[MNT-0170-031]</span>
+                    </td>
+                  </tr>
+
+                  <!-- Row 2: WELL-0172 -->
+                  <tr class="hover:bg-[#1C242E]/50 transition-colors">
+                    <td class="py-3 px-3.5 font-bold text-[#E6EAF0]">WELL-0172</td>
+                    <td class="py-3 px-3 text-[#8A96A6]">T200</td>
+                    <td class="py-3 px-3">
+                      <span class="text-[#E5484D] font-semibold">5.7 °C</span>
+                      <span class="text-[10px] text-[#8A96A6] font-sans">(&lt; 15 °C)</span>
+                    </td>
+                    <td class="py-3 px-3.5">
+                      <div class="flex items-center gap-1.5">
+                        <span class="text-[#E6EAF0]">active</span>
+                        <span class="inline-flex items-center px-1.5 py-0.5 rounded-[4px] bg-[#F2A93B]/10 border border-[#F2A93B] text-[#F2A93B] text-[10px] font-semibold">out of date</span>
+                      </div>
+                    </td>
+                    <td class="py-3 px-3.5 font-sans text-[#E6EAF0] max-w-[320px] leading-tight">
+                      Repair <span class="font-mono text-[#4C9EEB]">[MNT-0172-028]</span>, flowline pinhole leak, open since 3 Oct
+                    </td>
+                    <td class="py-3 px-3.5 text-right whitespace-nowrap">
+                      <span class="inline-flex items-center px-1.5 py-0.5 rounded-[4px] bg-[#1C242E] border border-[#27313D] text-[#4C9EEB] text-[10.5px] mr-1 hover:border-[#4C9EEB] cursor-pointer">[INS-0172-0205]</span>
+                      <span class="inline-flex items-center px-1.5 py-0.5 rounded-[4px] bg-[#1C242E] border border-[#27313D] text-[#4C9EEB] text-[10.5px] hover:border-[#4C9EEB] cursor-pointer">[MNT-0172-028]</span>
+                    </td>
+                  </tr>
+
+                  <!-- Row 3: WELL-0175 -->
+                  <tr class="hover:bg-[#1C242E]/50 transition-colors">
+                    <td class="py-3 px-3.5 font-bold text-[#E6EAF0]">WELL-0175</td>
+                    <td class="py-3 px-3 text-[#8A96A6]">T200</td>
+                    <td class="py-3 px-3">
+                      <span class="text-[#E5484D] font-semibold">0.4 °C</span>
+                      <span class="text-[10px] text-[#8A96A6] font-sans">(&lt; 15 °C)</span>
+                    </td>
+                    <td class="py-3 px-3.5">
+                      <div class="flex items-center gap-1.5">
+                        <span class="text-[#E6EAF0]">active</span>
+                        <span class="inline-flex items-center px-1.5 py-0.5 rounded-[4px] bg-[#F2A93B]/10 border border-[#F2A93B] text-[#F2A93B] text-[10px] font-semibold">out of date</span>
+                      </div>
+                    </td>
+                    <td class="py-3 px-3.5 font-sans text-[#E6EAF0] max-w-[320px] leading-tight">
+                      No recorded reason. Planned work since 14 Oct per Michael Turner (shared note).
+                    </td>
+                    <td class="py-3 px-3.5 text-right whitespace-nowrap">
+                      <span class="inline-flex items-center px-1.5 py-0.5 rounded-[4px] bg-[#1C242E] border border-[#27313D] text-[#4C9EEB] text-[10.5px] mr-1 hover:border-[#4C9EEB] cursor-pointer">[INS-0175-0205]</span>
+                      <span class="inline-flex items-center px-1.5 py-0.5 rounded-[4px] bg-[#1C242E] border border-[#27313D] text-[#4C9EEB] text-[10.5px] hover:border-[#4C9EEB] cursor-pointer">[CTX-0175-004]</span>
+                    </td>
+                  </tr>
+
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Below Table: Correction Applied Badge Row -->
+            <div class="p-3 bg-[#1C242E]/40 border-t border-[#27313D] flex flex-wrap items-center justify-between gap-2 text-[11px]">
+              <div class="flex items-center gap-2">
+                <span class="px-1.5 py-0.5 rounded-[4px] bg-[#3DB57A]/10 border border-[#3DB57A] text-[#3DB57A] font-mono text-[10px] font-semibold uppercase">Correction applied</span>
+                <span class="font-mono text-[#E6EAF0]">
+                  WELL-0164 · INS-0164-0205 wellhead <span class="line-through text-[#8A96A6]">24.0 °C</span> → <span class="text-[#3DB57A] font-bold">41.0 °C</span> · Michael Turner · faulty handheld thermal gun · scope: this inspection
+                </span>
+              </div>
+            </div>
+
+            <!-- Computed Line Rule Footer -->
+            <div class="px-3.5 py-2 bg-[#151B22] border-t border-[#27313D] text-[11px] text-[#8A96A6] font-mono">
+              Producing if wellhead − air ≥ 15 °C (T200 manual §9.3); latest inspection per well, 15 Oct 2026.
+            </div>
+
+          </div>
+
+          <!-- Follow-up Chips -->
+          <div class="flex flex-wrap items-center gap-2 pt-1">
+            <span class="text-[11px] font-mono text-[#8A96A6] mr-1">Suggested:</span>
+            
+            <button class="px-2.5 py-1 rounded-[4px] bg-[#151B22] border border-[#27313D] hover:border-[#4C9EEB] text-[#4C9EEB] font-sans text-[12px] flex items-center gap-1.5 transition-colors">
+              <span>Show WELL-0175 temperatures</span>
+              <span class="font-mono text-[10px] text-[#8A96A6]">→</span>
+            </button>
+            
+            <button class="px-2.5 py-1 rounded-[4px] bg-[#151B22] border border-[#27313D] hover:border-[#4C9EEB] text-[#4C9EEB] font-sans text-[12px] flex items-center gap-1.5 transition-colors">
+              <span>Who is in charge of these wells?</span>
+              <span class="font-mono text-[10px] text-[#8A96A6]">→</span>
+            </button>
+
+            <button class="px-2.5 py-1 rounded-[4px] bg-[#151B22] border border-[#27313D] hover:border-[#4C9EEB] text-[#4C9EEB] font-sans text-[12px] flex items-center gap-1.5 transition-colors">
+              <span>Repair cost this year</span>
+              <span class="font-mono text-[10px] text-[#8A96A6]">→</span>
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ST.CHAT_INPUT FOOTER BAR (Fixed docked bottom, centered ~920px width) -->
+    <footer class="w-full border-t border-[#27313D] bg-[#0E1217] p-4 flex flex-col items-center justify-center shrink-0 z-10">
+      <div class="w-full max-w-[920px]">
+        
+        <div class="bg-[#151B22] border border-[#27313D] focus-within:border-[#4C9EEB] rounded-[6px] p-2 flex items-center justify-between transition-colors">
+          <div class="flex items-center gap-2.5 flex-1 pl-1">
+            <svg class="w-4 h-4 text-[#8A96A6] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+            </svg>
+            <input 
+              type="text" 
+              placeholder="Ask about a well, an area, a spill or a rule..." 
+              class="w-full bg-transparent border-none text-[13px] text-[#E6EAF0] placeholder-[#8A96A6] focus:outline-none font-sans"
+            />
+          </div>
+          <div class="flex items-center gap-3 pr-1">
+            <span class="text-[10px] font-mono text-[#8A96A6] select-none hidden sm:inline">Ctrl+Enter to send</span>
+            <button class="w-7 h-7 rounded-[4px] bg-[#4C9EEB] text-[#0E1217] hover:bg-[#4C9EEB]/90 flex items-center justify-center transition-colors">
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="text-center mt-2">
+          <span class="text-[10.5px] font-sans text-[#8A96A6]">Gemma 4 can be wrong. Every number links to its record.</span>
+        </div>
+
+      </div>
+    </footer>
+
+  </main>
+
+</body>
+</html>

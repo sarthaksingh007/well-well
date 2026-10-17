@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1440, initial-scale=1.0">
+  <title>Well-Well — Asset Intelligence Copilot (Conflict & Correction Cards)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            bg: '#0E1217',
+            surface: '#151B22',
+            'surface-2': '#1C242E',
+            border: '#27313D',
+            text: '#E6EAF0',
+            'text-muted': '#8A96A6',
+            accent: '#4C9EEB',
+            'accent-hover': '#3a8bd6',
+            danger: '#E5484D',
+            warning: '#F2A93B',
+            success: '#3DB57A',
+            slate: '#64748B'
+          },
+          fontFamily: {
+            sans: ['"IBM Plex Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace']
+          },
+          borderRadius: {
+            card: '6px',
+            chip: '4px'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #0E1217;
+      color: #E6EAF0;
+      font-family: 'IBM Plex Sans', sans-serif;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      font-size: 18px;
+    }
+    /* Custom scrollbar for high-density industrial tool */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0E1217;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #27313D;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #3c4b5c;
+    }
+  </style>
+</head>
+<body class="bg-bg text-text h-screen flex overflow-hidden text-[13px] leading-relaxed select-none">
+
+  <!-- SIDEBAR (264px fixed) -->
+  <aside class="w-[264px] min-w-[264px] h-screen bg-surface border-r border-border flex flex-col justify-between shrink-0 z-20">
+    <!-- Top section -->
+    <div class="flex flex-col">
+      <!-- App Header -->
+      <div class="p-4 border-b border-border/80">
+        <div class="flex items-center gap-2">
+          <div class="w-3 h-3 rounded-full bg-accent ring-4 ring-accent/20"></div>
+          <span class="font-bold text-base tracking-tight text-text">Well-Well</span>
+        </div>
+        <p class="text-[11px] text-text-muted mt-0.5 tracking-wide uppercase font-medium">Asset Intelligence Copilot</p>
+      </div>
+
+      <!-- User Picker (Closed) -->
+      <div class="p-3 border-b border-border/60">
+        <div class="bg-surface-2 border border-border rounded-chip p-2 flex items-center justify-between cursor-pointer hover:border-slate/60 transition-colors">
+          <div class="flex items-center gap-2.5 overflow-hidden">
+            <div class="w-6 h-6 rounded-chip bg-[#2A3644] text-accent font-mono text-[11px] font-semibold flex items-center justify-center shrink-0">
+              TH
+            </div>
+            <div class="truncate">
+              <div class="font-medium text-text text-[12px] truncate">Tyler Hughes</div>
+              <div class="text-[10px] text-text-muted truncate">Field operator · Northeast Production</div>
+            </div>
+          </div>
+          <span class="material-symbols-outlined text-text-muted shrink-0 text-sm">unfold_more</span>
+        </div>
+      </div>
+
+      <!-- Action Button -->
+      <div class="p-3 pt-2">
+        <button class="w-full py-1.5 px-3 rounded-chip bg-surface-2 hover:bg-[#252f3d] border border-border text-text font-medium text-[12px] flex items-center justify-center gap-1.5 transition-colors">
+          <span class="material-symbols-outlined text-[16px]">add</span>
+          New chat
+        </button>
+      </div>
+
+      <!-- Conversations Section -->
+      <div class="px-3 pt-2">
+        <div class="text-[10px] uppercase font-semibold text-text-muted tracking-wider px-2 py-1">Conversations</div>
+        
+        <!-- Conversation item (Active) -->
+        <div class="mt-1 bg-surface-2 border-l-2 border-accent rounded-r-chip p-2 px-2.5 flex items-start justify-between cursor-pointer">
+          <div class="overflow-hidden pr-1">
+            <div class="font-medium text-[12px] text-text truncate">WELL-0175 running?</div>
+            <div class="text-[10px] text-text-muted flex items-center gap-1 mt-0.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-accent"></span>
+              now
+            </div>
+          </div>
+        </div>
+
+        <!-- Prior conversations -->
+        <div class="mt-1 p-2 px-2.5 rounded-chip hover:bg-surface-2/60 text-text-muted hover:text-text cursor-pointer transition-colors">
+          <div class="font-medium text-[12px] truncate">NE-7 downtime, last 4 months</div>
+          <div class="text-[10px] text-text-muted mt-0.5">yesterday</div>
+        </div>
+        <div class="mt-0.5 p-2 px-2.5 rounded-chip hover:bg-surface-2/60 text-text-muted hover:text-text cursor-pointer transition-colors">
+          <div class="font-medium text-[12px] truncate">WELL-0164 thermal gun reading</div>
+          <div class="text-[10px] text-text-muted mt-0.5">15 Oct</div>
+        </div>
+        <div class="mt-0.5 p-2 px-2.5 rounded-chip hover:bg-surface-2/60 text-text-muted hover:text-text cursor-pointer transition-colors">
+          <div class="font-medium text-[12px] truncate">NE-8 spills needing a report</div>
+          <div class="text-[10px] text-text-muted mt-0.5">14 Oct</div>
+        </div>
+
+        <!-- Nav Item: Memory -->
+        <div class="mt-4 pt-3 border-t border-border/60">
+          <div class="p-2 rounded-chip bg-surface-2/40 hover:bg-surface-2 border border-border/60 flex items-center justify-between cursor-pointer transition-colors">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-accent text-[17px]">psychology</span>
+              <div>
+                <div class="text-[12px] font-medium text-text">Memory</div>
+                <div class="text-[10px] text-text-muted font-mono leading-tight">Shared 44 · Private 2 · Corrections 9</div>
+              </div>
+            </div>
+            <span class="material-symbols-outlined text-text-muted text-sm">chevron_right</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar Bottom Status -->
+    <div class="p-3 border-t border-border/80 bg-surface">
+      <div class="text-[11px] text-text-muted font-mono">200 wells · 4 areas · data to 16 Oct 2026</div>
+      <div class="mt-2 flex items-center justify-between">
+        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#18261F] border border-success/30 text-success text-[10px] font-mono font-medium">
+          <span class="w-1.5 h-1.5 rounded-full bg-success animate-pulse"></span>
+          Gemma 4 · online
+        </span>
+        
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CHAT AREA (Centered ~920px column inside flexible viewport) -->
+  <main class="flex-1 flex flex-col h-screen overflow-hidden bg-bg">
+    <!-- Streamlit / Workspace Header Bar -->
+    
+
+    <!-- Scrollable Messages Container -->
+    <div class="flex-1 overflow-y-auto px-6 py-6 flex justify-center">
+      <div class="w-full max-w-[920px] flex flex-col gap-6 pb-8">
+
+        <!-- ========================================== -->
+        <!-- TURN 0: Earlier Context by Michael Turner -->
+        <!-- ========================================== -->
+        <div class="flex flex-col gap-2.5">
+          <!-- User Prompt -->
+          <div class="flex justify-end">
+            <div class="bg-surface-2 border border-border rounded-card px-4 py-2.5 max-w-[760px] text-text text-[13px]">
+              <div class="flex items-center gap-2 text-[10px] font-mono text-text-muted mb-1 justify-end">
+                <span>Michael Turner (Production Supervisor)</span>
+                <span>·</span>
+                <span>16 Oct 10:11</span>
+              </div>
+              The 15 Oct reading for <span class="font-mono text-accent">WELL-0164</span> is wrong — the handheld thermal gun was faulty; crew re-measured <span class="font-mono font-medium text-text">41.0 °C</span>.
+            </div>
+          </div>
+
+          <!-- Assistant Response with Correction Applied Card -->
+          <div class="flex flex-col gap-2 max-w-[880px]">
+            <!-- Primary Correction Card -->
+            <div class="bg-surface border border-border border-l-[3px] border-l-success rounded-card p-3.5 flex flex-col gap-2.5">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-chip bg-[#172B20] text-success border border-success/30 font-mono text-[11px] font-semibold uppercase">
+                    <span class="material-symbols-outlined text-[13px]">check_circle</span>
+                    Correction applied
+                  </span>
+                  <span class="font-mono text-text text-[12px] font-medium">INS-0164-0205 · wellhead_temp_c</span>
+                </div>
+                <span class="font-mono text-[11px] text-text-muted">16 Oct 2026 10:12</span>
+              </div>
+
+              <!-- Main correction details grid -->
+              <div class="bg-surface-2/60 border border-border/80 rounded-chip p-2.5 grid grid-cols-12 gap-3 text-[12px]">
+                <div class="col-span-4 border-r border-border/60 pr-2">
+                  <div class="text-[10px] text-text-muted uppercase font-mono">Value Replaced</div>
+                  <div class="font-mono text-[13px] mt-0.5">
+                    <span class="line-through text-text-muted decoration-danger decoration-2">24.0 °C</span>
+                    <span class="text-text-muted mx-1">→</span>
+                    <span class="font-semibold text-success">41.0 °C</span>
+                  </div>
+                </div>
+                <div class="col-span-5 border-r border-border/60 pr-2">
+                  <div class="text-[10px] text-text-muted uppercase font-mono">Author & Rationale</div>
+                  <div class="text-text font-medium mt-0.5 truncate">Michael Turner</div>
+                  <div class="text-[11px] text-text-muted truncate">"Faulty handheld thermal gun; crew re-measured"</div>
+                </div>
+                <div class="col-span-3">
+                  <div class="text-[10px] text-text-muted uppercase font-mono">Scope</div>
+                  <div class="mt-1">
+                    <span class="inline-block px-1.5 py-0.5 rounded-chip bg-surface border border-border font-mono text-[10px] text-text">This inspection only</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Effect line -->
+              <div class="flex items-center gap-2 text-[12px] text-text">
+                <span class="text-text-muted font-mono text-[11px] uppercase">Effect:</span>
+                <span class="font-mono text-text">WELL-0164 now <span class="text-success font-semibold">producing</span>: 41.0 − 19.9 = 21.1 °C ≥ 15 °C</span>
+              </div>
+
+              <!-- Amber Sub-note Warning -->
+              <div class="bg-[#241E15] border border-warning/40 rounded-chip p-2.5 flex items-start justify-between gap-3">
+                <div class="flex items-start gap-2">
+                  <span class="material-symbols-outlined text-warning text-[17px] shrink-0 mt-0.5">warning</span>
+                  <div class="text-[12px] text-text">
+                    <span class="text-warning font-semibold">Inspector note conflict:</span> Inspector note on the same inspection says <span class="font-mono text-text">"Pump jack not moving."</span> (Tyler Hughes) — confirm?
+                  </div>
+                </div>
+                <div class="flex items-center gap-1.5 shrink-0">
+                  <button class="px-2.5 py-1 rounded-chip bg-warning text-bg hover:bg-warning/90 font-semibold text-[11px] font-mono transition-colors">
+                    Confirm correction
+                  </button>
+                  <button class="px-2.5 py-1 rounded-chip bg-surface border border-border text-text hover:bg-surface-2 font-mono text-[11px] transition-colors">
+                    Undo
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Second compact correction badge -->
+            <div class="bg-surface border border-border/80 rounded-card px-3 py-2 flex items-center justify-between text-[11px] text-text-muted">
+              <div class="flex items-center gap-2 overflow-hidden">
+                <span class="px-1.5 py-0.5 rounded-chip bg-surface-2 border border-border font-mono text-[10px] text-text shrink-0 font-medium">Rule changed</span>
+                <span class="font-mono text-text shrink-0">scope: all T350 wells</span>
+                <span class="text-border">·</span>
+                <span class="truncate">pump jack root-cause analysis after <span class="font-mono line-through text-text-muted">3</span> <span class="text-text font-mono">→ 2</span> corrective repairs</span>
+              </div>
+              <div class="flex items-center gap-2 shrink-0 font-mono text-[10px]">
+                <span class="text-text">Michael Turner</span>
+                <span class="text-border">·</span>
+                <span class="text-slate">team preference, not manual (T200 manual §10)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="border-t border-border/50 my-1"></div>
+
+        <!-- ========================================== -->
+        <!-- TURN 1: Active Tyler Hughes Turn           -->
+        <!-- ========================================== -->
+        <div class="flex flex-col gap-2.5">
+          <!-- Tyler Prompt -->
+          <div class="flex justify-end">
+            <div class="bg-surface-2 border border-border rounded-card px-4 py-2.5 max-w-[760px] text-text text-[13px]">
+              <div class="flex items-center gap-2 text-[10px] font-mono text-text-muted mb-1 justify-end">
+                <span class="text-accent font-medium">Tyler Hughes (You)</span>
+                <span>·</span>
+                <span>16 Oct 14:02</span>
+              </div>
+              WELL-0175 is running fine.
+            </div>
+          </div>
+
+          <!-- Assistant Response with Contradiction Card -->
+          <div class="flex flex-col gap-2 max-w-[880px]">
+            <div class="bg-surface border border-border border-l-[3px] border-l-warning rounded-card p-4 flex flex-col gap-3">
+              <!-- Header -->
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-warning text-[18px]">gpp_maybe</span>
+                  <span class="font-semibold text-[13px] text-warning uppercase font-mono tracking-wide">Your statement contradicts the data</span>
+                </div>
+                <span class="font-mono text-[11px] text-text-muted">Target: WELL-0175</span>
+              </div>
+
+              <!-- Two Columns Side by Side -->
+              <div class="grid grid-cols-2 gap-3.5">
+                <!-- Left: You said -->
+                <div class="bg-surface-2 border border-border rounded-card p-3 flex flex-col justify-between">
+                  <div>
+                    <div class="flex items-center justify-between border-b border-border/60 pb-2 mb-2">
+                      <span class="text-[11px] font-mono text-text-muted uppercase">You said</span>
+                      <span class="px-1.5 py-0.5 rounded-chip bg-[#2A2114] text-warning border border-warning/30 font-mono text-[10px] font-medium">unconfirmed</span>
+                    </div>
+                    <div class="text-[13px] text-text font-medium italic">"WELL-0175 is running fine."</div>
+                  </div>
+                  <div class="mt-3 pt-2 border-t border-border/40 text-[11px] font-mono text-text-muted flex items-center justify-between">
+                    <span>Tyler Hughes</span>
+                    <span>16 Oct 2026 14:02</span>
+                  </div>
+                </div>
+
+                <!-- Right: The data shows -->
+                <div class="bg-surface-2 border border-border rounded-card p-3 flex flex-col justify-between">
+                  <div>
+                    <div class="flex items-center justify-between border-b border-border/60 pb-2 mb-2">
+                      <span class="text-[11px] font-mono text-text-muted uppercase">The data shows</span>
+                      <span class="px-1.5 py-0.5 rounded-chip bg-[#2B1618] text-danger border border-danger/30 font-mono text-[10px] font-semibold uppercase">Not producing</span>
+                    </div>
+                    <div class="text-[12px] text-text space-y-1.5">
+                      <div class="font-mono text-[11px] text-accent flex items-center gap-2">
+                        <span>INS-0175-0205</span>
+                        <span class="text-text-muted">·</span>
+                        <span class="text-text-muted">15 Oct 2026</span>
+                        <span class="text-text-muted">·</span>
+                        <span class="text-text">Jessica Reed</span>
+                      </div>
+                      <p class="text-[12px] text-text leading-snug">
+                        Wellhead <span class="font-mono font-medium">0.4 °C</span> above air (needs <span class="font-mono text-warning">≥ 15 °C</span>, T200 manual §9.3).
+                      </p>
+                      <div class="bg-surface border border-border/80 rounded-chip p-2 text-[11px] text-text-muted">
+                        <span class="text-text font-mono font-medium">Supported by note CTX-0175-004:</span>
+                        <div class="text-text italic mt-0.5">"Shut in for planned work since 14 Oct."</div>
+                        <div class="text-[10px] text-text-muted mt-1 font-mono">Michael Turner · 14 Oct 2026</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Policy Line -->
+              <div class="text-[12px] text-text-muted border-t border-border/60 pt-2 flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-[15px] text-slate">info</span>
+                <span>Both statements are kept on record. Yours is marked <strong class="text-warning font-medium">unconfirmed</strong> until someone confirms.</span>
+              </div>
+
+              <!-- Streamlit Buttons Row -->
+              <div class="flex items-center gap-2 pt-0.5">
+                <button class="px-3 py-1.5 rounded-chip bg-accent hover:bg-accent-hover text-bg font-semibold text-[12px] flex items-center gap-1.5 transition-colors">
+                  <span class="material-symbols-outlined text-[15px]">edit_calendar</span>
+                  It's running — record a new reading
+                </button>
+                <button class="px-3 py-1.5 rounded-chip bg-surface-2 hover:bg-[#252f3d] border border-border text-text font-medium text-[12px] transition-colors">
+                  I was wrong
+                </button>
+                <button class="px-3 py-1.5 rounded-chip bg-surface-2 hover:bg-[#252f3d] border border-border text-text font-medium text-[12px] transition-colors">
+                  Ask Michael Turner
+                </button>
+              </div>
+
+              <!-- Citation chips row + computed line -->
+              <div class="bg-surface-2/40 border border-border/60 rounded-chip px-3 py-2 flex items-center justify-between text-[11px]">
+                <div class="flex items-center gap-1.5">
+                  <span class="text-text-muted uppercase font-mono text-[10px]">Citations:</span>
+                  <a href="#" class="px-1.5 py-0.5 rounded-chip bg-surface border border-border text-accent font-mono hover:underline">[INS-0175-0205]</a>
+                  <a href="#" class="px-1.5 py-0.5 rounded-chip bg-surface border border-border text-accent font-mono hover:underline">[T200 manual §9.3]</a>
+                  <a href="#" class="px-1.5 py-0.5 rounded-chip bg-surface border border-border text-accent font-mono hover:underline">[CTX-0175-004]</a>
+                </div>
+                <div class="font-mono text-text">
+                  Computed formula: <span class="text-danger font-semibold">Δ = 0.4 °C &lt; 15 °C → not producing</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="border-t border-border/50 my-1"></div>
+
+        <!-- ========================================== -->
+        <!-- TURN 2: Spill Investigation & Disagreement-->
+        <!-- ========================================== -->
+        <div class="flex flex-col gap-2.5">
+          <!-- User Prompt -->
+          <div class="flex justify-end">
+            <div class="bg-surface-2 border border-border rounded-card px-4 py-2.5 max-w-[760px] text-text text-[13px]">
+              <div class="flex items-center gap-2 text-[10px] font-mono text-text-muted mb-1 justify-end">
+                <span>Field Integrity Lead</span>
+                <span>·</span>
+                <span>Today 14:15</span>
+              </div>
+              Was the 20 Aug spill at WELL-0101 real oil?
+            </div>
+          </div>
+
+          <!-- Assistant Response with Two Users Disagree Card -->
+          <div class="flex flex-col gap-2 max-w-[880px]">
+            <!-- Lead Assistant Text -->
+            <div class="text-[13px] text-text leading-relaxed bg-surface/40 p-3 rounded-card border border-border/40">
+              <p>
+                <strong class="text-text font-semibold">Yes.</strong> The detection stands: no formal correction exists and spill repair <span class="font-mono text-accent">[MNT-0101-029]</span> was completed.
+              </p>
+            </div>
+
+            <!-- Disagreement Card -->
+            <div class="bg-surface border border-border border-l-[3px] border-l-warning rounded-card p-4 flex flex-col gap-3">
+              <!-- Header -->
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-warning text-[18px]">group_off</span>
+                  <span class="font-semibold text-[13px] text-warning uppercase font-mono tracking-wide">Two users disagree</span>
+                </div>
+                <span class="font-mono text-[11px] text-text-muted">WELL-0101 · Incident 20 Aug 2026</span>
+              </div>
+
+              <!-- Two Disagreeing Column Notes -->
+              <div class="grid grid-cols-2 gap-3.5">
+                <!-- User 1 -->
+                <div class="bg-surface-2 border border-border rounded-card p-3">
+                  <div class="flex items-center justify-between border-b border-border/60 pb-2 mb-2 font-mono text-[11px]">
+                    <span class="text-text font-medium">Ryan Brooks</span>
+                    <span class="text-text-muted">Field inspector</span>
+                  </div>
+                  <div class="font-mono text-[11px] text-accent mb-1.5">[CTX-0101-002] · 21 Aug 2026</div>
+                  <div class="text-[12px] text-text italic bg-surface/50 p-2 rounded-chip border border-border/40">
+                    "Looks like produced water, not crude."
+                  </div>
+                </div>
+
+                <!-- User 2 -->
+                <div class="bg-surface-2 border border-border rounded-card p-3">
+                  <div class="flex items-center justify-between border-b border-border/60 pb-2 mb-2 font-mono text-[11px]">
+                    <span class="text-text font-medium">Chris Dalton</span>
+                    <span class="text-text-muted">HSE officer</span>
+                  </div>
+                  <div class="font-mono text-[11px] text-accent mb-1.5">[CTX-0101-003] · 22 Aug 2026</div>
+                  <div class="text-[12px] text-text italic bg-surface/50 p-2 rounded-chip border border-border/40">
+                    "Sampled the stain — confirmed crude."
+                  </div>
+                </div>
+              </div>
+
+              <!-- Below Card Evidence Details -->
+              <div class="bg-surface-2/60 border border-border/80 rounded-chip p-2.5 flex items-center justify-between text-[12px]">
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-accent text-[16px]">search_insights</span>
+                  <span class="text-text font-mono font-medium">AI detection:</span>
+                  <span class="font-mono text-accent">[INS-0101-0197]</span>
+                  <span class="text-text-muted">·</span>
+                  <span class="font-mono font-semibold text-text">1.0 bbl</span>
+                  <span class="text-text-muted">·</span>
+                  <span class="text-text italic">"Oil sheen around cellar"</span>
+                </div>
+                <div class="text-slate font-mono text-[11px]">
+                  Neither note is a formal correction.
+                </div>
+              </div>
+
+              <!-- Decision Buttons Row -->
+              <div class="flex items-center gap-2 pt-0.5">
+                <button class="px-3 py-1.5 rounded-chip bg-surface-2 hover:bg-[#252f3d] border border-border text-text font-medium text-[12px] transition-colors">
+                  Mark as crude (correction)
+                </button>
+                <button class="px-3 py-1.5 rounded-chip bg-surface-2 hover:bg-[#252f3d] border border-border text-text font-medium text-[12px] transition-colors">
+                  Mark as not a spill (correction)
+                </button>
+                <button class="px-3 py-1.5 rounded-chip bg-surface-2 hover:bg-[#252f3d] border border-border text-text-muted hover:text-text font-medium text-[12px] transition-colors">
+                  Leave as is
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- CHAT INPUT AREA (Fixed bottom, Streamlit-style st.chat_input) -->
+    <div class="border-t border-border bg-surface/90 px-6 py-3.5 flex justify-center shrink-0">
+      <div class="w-full max-w-[920px] flex flex-col gap-1.5">
+        <div class="bg-surface-2 border border-border rounded-card p-2 px-3 flex items-center gap-3 focus-within:border-accent transition-colors">
+          <span class="material-symbols-outlined text-text-muted">attach_file</span>
+          <input 
+            type="text" 
+            placeholder="Ask about a well, report a correction, or inspect a conflict..." 
+            class="bg-transparent border-none text-text text-[13px] placeholder-text-muted focus:outline-none flex-1"
+          />
+          <div class="flex items-center gap-2 font-mono text-[11px] text-text-muted">
+            <span class="text-[10px] bg-surface px-1.5 py-0.5 rounded border border-border">Ctrl+Enter</span>
+            <button class="w-7 h-7 rounded-chip bg-accent text-bg flex items-center justify-center hover:bg-accent-hover transition-colors">
+              <span class="material-symbols-outlined text-[17px]">arrow_upward</span>
+            </button>
+          </div>
+        </div>
+        <div class="flex items-center justify-between text-[11px] text-text-muted font-mono px-1">
+          <span>Gemma 4 can be wrong. Every number links to its record.</span>
+          
+        </div>
+      </div>
+    </div>
+  </main>
+
+</body>
+</html>

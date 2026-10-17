@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Well-Well write-up</title>
+<style>
+@page { size: A4; margin: 12mm 13mm; }
+body { font-family: -apple-system, "Helvetica Neue", Arial, sans-serif; font-size: 8.9pt; line-height: 1.36; color: #16202b; margin: 0; }
+h1 { font-size: 16pt; margin: 0; letter-spacing: -0.2px; }
+.sub { color: #5a6b7d; font-size: 8.4pt; margin: 1mm 0 3mm; }
+h2 { font-size: 10.6pt; margin: 3.2mm 0 1.2mm; padding-bottom: 0.6mm; border-bottom: 1.4px solid #2f6fd6; }
+h3 { font-size: 9.2pt; margin: 2mm 0 0.6mm; }
+p { margin: 0.8mm 0; }
+ul { margin: 0.6mm 0 0.6mm 4.5mm; padding: 0; }
+li { margin: 0.3mm 0; }
+code, .mono { font-family: Menlo, "SF Mono", Consolas, monospace; font-size: 7.8pt; }
+table { border-collapse: collapse; width: 100%; margin: 1mm 0 1.6mm; font-size: 8pt; }
+th, td { border: 1px solid #d9e0e7; padding: 0.7mm 1.3mm; text-align: left; vertical-align: top; }
+th { background: #eef3f8; font-weight: 600; }
+.note { background: #f4f8fd; border-left: 3px solid #2f6fd6; padding: 1.4mm 2.4mm; margin: 1.4mm 0; }
+.cols { display: flex; gap: 4.5mm; } .cols > div { flex: 1; min-width: 0; }
+pre { font-family: Menlo, monospace; font-size: 7.1pt; background: #f3f6f9; border: 1px solid #dde4ea; border-radius: 3px; padding: 1.6mm 2mm; margin: 1mm 0; line-height: 1.28; white-space: pre; }
+.pass { color: #1f7a4d; font-weight: 600; }
+.pb { page-break-before: always; }
+.small { font-size: 7.8pt; color: #4a5a6b; }
+</style>
+</head>
+<body>
+
+<h1>Well-Well — Asset Intelligence Copilot</h1>
+<div class="sub">FlytBase AHC SWE Hack Day, Pune · 17 Oct 2026 · open source (MIT) · <span class="mono">docker compose up</span> → http://localhost:8765</div>
+
+<div class="note"><b>Design principle.</b> The language model decides <i>what to look up and how to say it</i>; deterministic code decides <i>what is true</i>. Every number in an answer is computed by SQL/Python from the records, and every claim cites the inspection, repair, regulator event, note or manual section it came from.</div>
+
+<h2>Page 1 — System design</h2>
+
+<pre>
+Web UI (Stitch design: chat, user picker, inline status card / table / line / bar / map / heatmap, agent graph, memory drawer)
+   │  POST /api/ask (streamed steps)            FastAPI · all endpoints POST · per-user privacy enforced in the service layer
+Agent harness ── JSON tool protocol ── Gemini 3.5 Flash-Lite → 3.1 Flash-Lite → Gemma 4 26B (fallback chain, backoff + hedged requests)
+   │  guardrails: injection/delete filters · read-only SQL (AST allowlist) · unknown citations removed · ungrounded numbers flagged
+18 typed tools ── facts (status, spills, downtime, aggregate, repairs, RCA, compliance) · hybrid doc search · memory writes · recall
+   │
+PostgreSQL 16 ── dataset tables · view inspection_facts (corrections applied, margin, producing, effective spill) · memory · chats
+             └─ vector_cache schema: 14,562 BGE-large vectors (survives resets; shipped as a 28 MB seed for fresh installs)
+Loader ── fleet → manuals/SOPs (rules extracted) → wells, inspections, repairs + free-text reports (facts extracted), events, notes
+</pre>
+
+<div class="cols"><div>
+<h3>Data: storage, indexing, retrieval</h3>
+<ul>
+<li><b>Load:</b> <span class="mono">wellwell load &lt;folder&gt; --dataset test</span> upserts on the dataset's own IDs (INS-…, MNT-…), so the test release merges next to the sample; a status endpoint drives a progress dialog (wells x/y, indexing).</li>
+<li><b>Rules come from documents, not code:</b> producing threshold (T200 15 °C, T350 20 °C), alarm limit and RCA rule are parsed from each manual; containment hours, spill class and the compliance table from each repair report.</li>
+<li><b>One truth view:</b> <span class="mono">inspection_facts</span> applies the latest active correction per field and computes margin over air, producing flag and effective spill, for every tool and user.</li>
+<li><b>Text search:</b> manuals/SOPs/reports split by heading; BGE-large (<span class="mono">bge-large-en-v1.5</span>, local) vectors stored in Postgres keyed by text hash, fused with BM25 by reciprocal rank. Modes: Semantic (default), Smart (hybrid), Exact words.</li>
+<li><b>Fallback:</b> read-only SQL for questions no tool covers.</li>
+</ul>
+<h3>Tools and how sources combine</h3>
+<p>Typed, parameterised tools (any well, area, type, period, metric). Numbers, documents and notes meet inside them: downtime = 7 days × weekly inspections below the manual threshold, each explained by the repair it triggered or the note covering it; SR-02 compares discovery time with containment hours that exist only in report text; SR-01/SR-03/RC-04 compare regulator events with SOP deadlines.</p>
+</div><div>
+<h3>Memory (two levels)</h3>
+<ul>
+<li><b>Shared:</b> notes ("WELL-0007 shut in from 17 Oct"), corrections and claims are stored per well or well type with author and reason; every user's later answers include them.</li>
+<li><b>Learning from feedback:</b> corrections to raw data or AI analysis keep the original value, who, why, when; a newer one supersedes, both stay. Team rules ("T350: RCA after 2") apply to that type only.</li>
+<li><b>Private:</b> conversations and the wells in each answer are per user; recall filters by the signed-in user, so "the wells we discussed yesterday" never reaches another user's history.</li>
+<li><b>Self-evolving playbook:</b> each verified answer stores an anonymised question pattern + tool plan; 👍/eval passes raise trust, 👎 marks it to avoid; similar new questions get advisory hints (BGE similarity ≥ 0.82). Kill switch per request.</li>
+</ul>
+<h3>Conflicts and new data</h3>
+<ul>
+<li>Claims are checked against the latest inspection (confirmed / contradicted → kept as unconfirmed, both sides shown, user asked to confirm). Opinion notes never override data; only formal corrections do. Stale recorded status is flagged.</li>
+<li>New data: same loader, rules re-read, only new text embedded; tolerant parsing with load warnings; unseen questions use generic tools, aggregate, doc search and SQL.</li>
+</ul>
+<h3>Models and cost</h3>
+<p>Gemini 3.5 Flash-Lite (≈1.2 s/call) primary, Gemma 4 26B fallback (both free tier on the Gemini API); BGE-large local on CPU/Apple GPU. 1–3 model calls per question; median answer 4 s. Cost: USD 0.</p>
+<h3>Next</h3>
+<p>Postgres row-level security per team, proactive alerts (new stops, SR deadlines), image second-checks of AI spill estimates, review queue for claims and corrections.</p>
+</div></div>
+
+<h2 class="pb">Page 2 — Results</h2>
+
+<h3>Sample dataset: the 18 example scenarios (fresh database, full run end to end through the UI API)</h3>
+<p><span class="pass">18/18 scenarios, 27/27 steps correct</span> (facts, IDs, dates, names, cited records and the right visual), median 4 s per answer (max 55 s on one API retry). 95 automated tests (unit, edge cases, API, loader, embeddings, guardrails); Docker from-scratch smoke test passes.</p>
+<table>
+<tr><th>#</th><th>Question (short)</th><th>Key result</th><th>Visual</th><th>Tools</th><th>s</th></tr>
+<tr><td>Q1</td><td>WELL-0001 producing now?</td><td>No; INS-0001-0203, 15 Oct, drone, Ryan Brooks; 3.2 °C &lt; 15; CTX-0001-003 planned shut-in; status out of date</td><td>card</td><td class="mono">well_status</td><td>10</td></tr>
+<tr><td>Q2</td><td>NE Block 8 not producing, why</td><td>0164, 0170 (MNT-0170-031), 0172 (MNT-0172-028), 0175; two with no recorded reason</td><td>table</td><td class="mono">wells_not_producing</td><td>5</td></tr>
+<tr><td>Q3</td><td>13-week temperatures</td><td>13 readings; not producing 8 and 15 Oct</td><td>line</td><td class="mono">temperature_history</td><td>5</td></tr>
+<tr><td>Q4</td><td>WELL-0001 spills, 4 years</td><td>6 spills, 15.1 bbl; INS-0001-0070 excluded (rainwater)</td><td>table</td><td class="mono">spills</td><td>4</td></tr>
+<tr><td>Q5</td><td>Days down in 2025</td><td>21 days (3×7): MNT-0001-021, MNT-0001-023</td><td>—</td><td class="mono">downtime</td><td>4</td></tr>
+<tr><td>Q6</td><td>NE-7 top-3 downtime, 4 months</td><td>0121 49, 0138 42, 0107 42; next 0119 28</td><td>bar</td><td class="mono">downtime</td><td>5</td></tr>
+<tr><td>Q7</td><td>NE-8 real spills, 90 days</td><td>0151, 0165, 0175, 0186 with coordinates</td><td>map</td><td class="mono">spills</td><td>4</td></tr>
+<tr><td>Q8</td><td>2026 spills area × month</td><td>35 / 43 / 37 / 26</td><td>heatmap</td><td class="mono">aggregate</td><td>3</td></tr>
+<tr><td>Q9</td><td>WELL-0001 rules broken</td><td>SR-01 (41 h), SR-02 (7 h), SR-03 (due 10 Aug), RC-04; USD 5,000 open; RCA + shut-in pending</td><td>table</td><td class="mono">compliance</td><td>5</td></tr>
+<tr><td>Q10</td><td>SW-24 containment over limit</td><td>0082 7.1 h, 0100 8.1 h (from reports)</td><td>table</td><td class="mono">spills, compliance</td><td>4</td></tr>
+<tr><td>Q11</td><td>"Three wells … yesterday" cost</td><td>USD 25,794 / 46,942 / 5,176 (private recall)</td><td>table</td><td class="mono">recall, repairs</td><td>6</td></tr>
+<tr><td>Q12</td><td>Correct WELL-0164 reading</td><td>COR recorded, 24.0→41.0 °C, 21.1 °C → producing; "Pump jack not moving" flagged; Q2 now 3 wells</td><td>card/table</td><td class="mono">record_correction</td><td>4–5</td></tr>
+<tr><td>Q13</td><td>Spill 4.5→5.4 bbl</td><td>Reportable; SR-01 overdue; report class no longer holds; SR-03 due 23 Nov</td><td>card</td><td class="mono">record_correction</td><td>4</td></tr>
+<tr><td>Q14</td><td>T350 RCA rule</td><td>Before 0108/0121/0138; after +0120 (T350), not 0102 (T200); cites Michael Turner's rule</td><td>table</td><td class="mono">rca_due, record_rule</td><td>3–5</td></tr>
+<tr><td>Q15</td><td>Correction reaches others</td><td>Jessica sees 41.0 °C by Michael Turner + disagreeing note; Laura sees WELL-0151 reportable</td><td>card/table</td><td class="mono">well_status, spills</td><td>2–4</td></tr>
+<tr><td>Q16</td><td>Shared vs private</td><td>Michael sees Jake's WELL-0007 workover; Jessica: no such earlier conversation</td><td>card / —</td><td class="mono">record_note, recall</td><td>3–4</td></tr>
+<tr><td>Q17</td><td>People vs data</td><td>WELL-0175 shut-in confirmed; Tyler's "running" contradicted (0.4 °C, Jessica Reed); Jake's WELL-0001 claim unconfirmed (CTX-0001-003)</td><td>card</td><td class="mono">record_claim</td><td>5</td></tr>
+<tr><td>Q18</td><td>WELL-0101 spill real?</td><td>Yes; CTX-0101-002 vs CTX-0101-003, no formal correction, MNT-0101-029 → stands</td><td>card</td><td class="mono">inspection_detail</td><td>4</td></tr>
+</table>
+
+<h3>Final questions on the test dataset</h3>
+<p class="small">To be filled during the final two hours: the test dataset is loaded with <span class="mono">wellwell load &lt;path&gt; --dataset test</span> (merges by ID, embeds only new text), then each final question is run through the copilot and recorded here.</p>
+<table>
+<tr><th>#</th><th>Question</th><th>Our answer (short)</th><th>Visual</th><th>Notes</th></tr>
+<tr><td>F1</td><td></td><td></td><td></td><td></td></tr>
+<tr><td>F2</td><td></td><td></td><td></td><td></td></tr>
+<tr><td>F3</td><td></td><td></td><td></td><td></td></tr>
+</table>
+
+<div class="cols"><div>
+<h3>What worked</h3>
+<ul>
+<li>Deterministic tools made answers exact and repeatable; the model never does arithmetic.</li>
+<li>Reading thresholds and deadlines from the manuals/SOPs instead of hard-coding them.</li>
+<li>One corrected view (<span class="mono">inspection_facts</span>) made corrections reach every answer and user.</li>
+<li>Prefetch + a fast model brought typical answers from 40–130 s to 2–10 s.</li>
+</ul>
+</div><div>
+<h3>What didn't, and why</h3>
+<ul>
+<li>The free Gemma endpoint returned frequent 500/504s; fixed with backoff, hedged requests and a model fallback chain.</li>
+<li>A Postgres NULL-ordering difference picked the wrong downtime cause; found by the eval, fixed with explicit ordering.</li>
+<li>Private recall initially fell back to an unrelated chat; now it requires a match and otherwise says there is no such conversation.</li>
+</ul>
+</div></div>
+
+</body>
+</html>

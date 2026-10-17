@@ -1,0 +1,336 @@
+[
+  {
+    "key": "Q1",
+    "ok": true,
+    "missing": [],
+    "visual": "status_card",
+    "expected_visual": "status_card",
+    "seconds": 10,
+    "tools": [
+      "well_status"
+    ],
+    "answer": "WELL-0001 is not producing oil right now. It was last inspected on 2026-10-15 by Ryan Brooks using a drone [INS-0001-0203].\n\n- **Producing Status:** Not producing. Wellhead temperature was 25.6 \u00b0C vs air 22.4 \u00b0C (3.2 \u00b0C above air), falling short of the T200 manual \u00a79.3 requirement of at least 15.0 \u00b0C above air.\n- **Latest Inspection:** INS-0001-0203 on 2026-10-15 09:45 by inspector Ryan Brooks using a drone [INS-0001-0203].\n- **Wellhead vs Air:** Wellhead is 25.6 \u00b0C and air is 22.4 \u00b0C, giving a margin of 3.2 \u00b0C above air, which is 11.8 \u00b0C below the required 15.0 \u00b0C margin [T200 manual \u00a79.3].\n- **Reason:** Note [CTX-0001-003] by Jake Morales states: \"Well shut in from 7 Oct for planned rod string replacement. Work order not yet in the maintenance system. Expected back online around 20 Oct.\" The work order is not yet in the maintenance system, and the inspector noted \"Pump jack not moving.\"\n- **Recorded Status:** The recorded status is 'active', which is out of date."
+  },
+  {
+    "key": "Q2",
+    "ok": true,
+    "missing": [],
+    "visual": "table",
+    "expected_visual": "table",
+    "seconds": 5,
+    "tools": [
+      "wells_not_producing"
+    ],
+    "answer": "There are 4 wells in Northeast Block 8 not producing oil at their latest inspection [OM-T200, OM-T350].\n\n- WELL-0164 (T200): Last inspected 2026-10-15 [INS-0164-0205], wellhead 4.1 \u00b0C above air (producing margin rule requires \u2265 5.0 \u00b0C [T200 manual \u00a79.3]); recorded status is active (out of date); reason: No recorded reason - suggest a field check; inspector note: \"Pump jack not moving.\"\n- WELL-0170 (T200): Last inspected 2026-10-15 [INS-0170-0206], wellhead 2.9 \u00b0C above air; recorded status is down; reason: Repair MNT-0170-031: Walking beam bearing wear (pump_jack), started 19 Sep 2026, still open.\n- WELL-0172 (T200): Last inspected 2026-10-15 [INS-0172-0206], wellhead 5.7 \u00b0C above air; recorded status is active (out of date); reason: Repair MNT-0172-028: Flowline corrosion pinhole leak (flowline), started 03 Oct 2026, still open; inspector note: \"No stroke observed during flight.\"\n- WELL-0175 (T200): Last inspected 2026-10-15 [INS-0175-0204], wellhead 0.4 \u00b0C above air; recorded status is active (out of date); reason: No recorded reason - suggest a field check."
+  },
+  {
+    "key": "Q3",
+    "ok": true,
+    "missing": [],
+    "visual": "line",
+    "expected_visual": "line",
+    "seconds": 5,
+    "tools": [
+      "well_status",
+      "temperature_history"
+    ],
+    "answer": "WELL-0001 is currently NOT producing oil as of its latest inspection [INS-0001-0203] on 15 Oct 2026 by Ryan Brooks using a drone, with wellhead temperature at 25.6 \u00b0C vs air 22.4 \u00b0C (margin of 3.2 \u00b0C above air, failing the T200 manual \u00a79.3 rule requiring at least 15.0 \u00b0C) [INS-0001-0203, OM-T200]. The recorded status 'active' is out of date [INS-0001-0203]. Reason: Note [CTX-0001-003] by Jake Morales states well is shut in from 7 Oct for planned rod string replacement, expected back online around 20 Oct; work order is not yet in the maintenance system [CTX-0001-003]. Over the last 13 weekly readings, it was not producing on 08 Oct 2026 [INS-0001-0202] and 15 Oct 2026 [INS-0001-0203]."
+  },
+  {
+    "key": "Q4",
+    "ok": true,
+    "missing": [],
+    "visual": "table",
+    "expected_visual": "table",
+    "seconds": 4,
+    "tools": [
+      "spills"
+    ],
+    "answer": "WELL-0001 has had 6 real oil spills totaling 15.1 bbl in the last 4 years (out of 7 total detections, with 1 corrected as not a spill). \n\n- 2023-03-16: INS-0001-0021, 0.5 bbl (minor), regulator report not required.\n- 2023-04-27: INS-0001-0027, 2.6 bbl (moderate), regulator report not required.\n- 2023-09-28: INS-0001-0048, 3.3 bbl (moderate), regulator report not required.\n- 2023-10-19: INS-0001-0051, 0.3 bbl (minor), regulator report not required.\n- 2026-06-11: INS-0001-0185, 6.8 bbl (reportable), regulator report filed after 41.0 h (late, limit 24 h) [REG-0001-001].\n- 2026-10-01: INS-0001-0201, 1.6 bbl (moderate), regulator report not required.\n\nOne detection on 2024-03-07 [INS-0001-0070] was corrected by Laura Simmons  as rainwater mixed with soil and does not count per [SOP-SR \u00a77]."
+  },
+  {
+    "key": "Q5",
+    "ok": true,
+    "missing": [],
+    "visual": "table",
+    "expected_visual": null,
+    "seconds": 4,
+    "tools": [
+      "well_status",
+      "downtime"
+    ],
+    "answer": "WELL-0001 was down for 21 days in 2025, based on 3 inspections where it was found not producing (3 \u00d7 7 days = 21 days). The evidence includes:\n- **2025-07-24** ([INS-0001-0140]): wellhead 51.6 \u00b0C vs air 43.1 \u00b0C = 8.5 \u00b0C above air (51.6 \u00b0C looks hot but the air was 43.1 \u00b0C, only 8.5 \u00b0C warmer, which is below the 15.0 \u00b0C requirement); cause: Prime mover tripped on high temperature ([MNT-0001-021]).\n- **2025-10-16** ([INS-0001-0152]): wellhead 26.6 \u00b0C vs air 23.2 \u00b0C = 3.4 \u00b0C above air; cause: Stuffing box packing leak ([MNT-0001-023]).\n- **2025-10-23** ([INS-0001-0153]): wellhead 16.0 \u00b0C vs air 16.6 \u00b0C = -0.6 \u00b0C above air; cause: Stuffing box packing leak ([MNT-0001-023])."
+  },
+  {
+    "key": "Q6",
+    "ok": true,
+    "missing": [],
+    "visual": "bar",
+    "expected_visual": "bar",
+    "seconds": 5,
+    "tools": [
+      "downtime"
+    ],
+    "answer": "The three wells in Northeast Block 7 with the most downtime in the last 4 months are WELL-0121 with 49 days (7 not-producing inspections \u00d7 7 days), WELL-0107 with 42 days (6 not-producing inspections \u00d7 7 days), and WELL-0138 with 42 days (6 not-producing inspections \u00d7 7 days). The next well after the top 3 is WELL-0119 with 28 days.\n\n- **WELL-0121 (T200, 49 days total):** Had 7 not-producing inspections across the period. Causes included a gearbox oil leak [INS-0121-0189] (wellhead 33.3 \u00b0C vs air 32.9 \u00b0C, 0.4 \u00b0C above air) and prime mover failures [INS-0121-0200, INS-0121-0201, INS-0121-0202, INS-0121-0203, INS-0121-0205, INS-0121-0206] with wellhead temperatures ranging from 22.7 \u00b0C to 34.4 \u00b0C against air temperatures of 21.7 \u00b0C to 29.5 \u00b0C (temperature differences from -0.8 \u00b0C to 5.2 \u00b0C above air).\n- **WELL-0107 (T350, 42 days total):** Had 6 not-producing inspections caused by stuffing box packing leaks [INS-0107-0194, INS-0107-0195, INS-0107-0196, INS-0107-0197, INS-0107-0198, INS-0107-0199] with wellhead temperatures between 34.9 \u00b0C and 47.5 \u00b0C versus air temperatures of 33.3 \u00b0C to 39.1 \u00b0C (1.6 \u00b0C to 9.9 \u00b0C above air).\n- **WELL-0138 (T350, 42 days total):** Had 6 not-producing inspections caused by prime mover failures [INS-0138-0195, INS-0138-0196, INS-0138-0200, INS-0138-0201] and gearbox oil leaks [INS-0138-0206, INS-0138-0207], with wellhead temperatures ranging from 29.8 \u00b0C to 39.4 \u00b0C against air temperatures of 21.7 \u00b0C to 36.9 \u00b0C (2.0 \u00b0C to 8.1 \u00b0C above air)."
+  },
+  {
+    "key": "Q7",
+    "ok": true,
+    "missing": [],
+    "visual": "map",
+    "expected_visual": "map",
+    "seconds": 4,
+    "tools": [
+      "spills"
+    ],
+    "answer": "There are 4 wells in Northeast Block 8 with a real spill in the last 90 days (18 Jul to 16 Oct 2026) totaling 10.2 bbl, with 2 additional detections excluded by corrections [INS-0194-0192, , INS-0199-0200, , SOP-SR \u00a77].\n\n- WELL-0186: 0.6 bbl (minor), on 2026-07-23, inspection [INS-0186-0097]. Regulator report: not required.\n- WELL-0165: 1.2 bbl (moderate), on 2026-07-30, inspection [INS-0165-0194]. Regulator report: not required.\n- WELL-0175: 3.9 bbl (moderate), on 2026-07-30, inspection [INS-0175-0193]. Regulator report: not required.\n- WELL-0151: 4.5 bbl (moderate), on 2026-09-24, inspection [INS-0151-0201]. Regulator report: not required."
+  },
+  {
+    "key": "Q8",
+    "ok": true,
+    "missing": [],
+    "visual": "heatmap",
+    "expected_visual": "heatmap",
+    "seconds": 3,
+    "tools": [
+      "aggregate"
+    ],
+    "answer": "Here is the heatmap of 2026 spill counts by geographic area and month, totaling 141 spills across all areas [SOP-SR]."
+  },
+  {
+    "key": "Q9",
+    "ok": true,
+    "missing": [],
+    "visual": "table",
+    "expected_visual": "table",
+    "seconds": 5,
+    "tools": [
+      "compliance"
+    ],
+    "answer": "In the last 12 months, WELL-0001 has recorded 4 breaches totaling USD 5,000 in still-open fines, alongside 2 pending items and 3 met requirements.\n\n**Breaches (4):**\n- **SR-01:** For the 11 Jun 2026 reportable spill (6.8 bbl), the written notice was filed after 41.0 hours, exceeding the 24-hour limit; this led to notice of violation REG-0001-002 carrying a USD 5,000 fine which is still open [INS-0001-0185, REG-0001-001, REG-0001-002].\n- **SR-03:** Agency verification for the same 11 Jun 2026 spill was due by 10 Aug 2026 and remains open [INS-0001-0185, REG-0001-003].\n- **SR-02:** The 11 Jun 2026 spill was contained after about 7.0 hours, exceeding the 4-hour limit [INS-0001-0185, MNT-0001-029, RPT-MNT-0001-029].\n- **RC-04:** Notice REG-0001-002 required a response by 30 Jul 2026, but no response has been recorded [REG-0001-002].\n\n**Still Pending (2):**\n- **RCA:** A root-cause analysis is due on the flowline due to 3 corrective repairs in the last 12 months (MNT-0001-028, MNT-0001-029, MNT-0001-032), hitting the threshold of 3 per T200 manual \u00a710; report MNT-0001-032 marks it 'Action required' [MNT-0001-028, MNT-0001-029, MNT-0001-032].\n- **T200 \u00a74:** A planned shut-in from 07 Oct (CTX-0001-003) is not yet in the maintenance system; the manual requires it to be recorded before work starts [CTX-0001-003, OM-T200].\n\n**Met Requirements (3):**\n- **SR-02:** The 01 Oct 2026 spill (1.6 bbl) was contained after about 1.7 hours, meeting the 4-hour limit [INS-0001-0201, MNT-0001-032, RPT-MNT-0001-032].\n- **RC-02:** Flowline integrity tests were successfully completed on 2025-03-29 and 2026-03-07 [MNT-0001-019, MNT-0001-026]."
+  },
+  {
+    "key": "Q10",
+    "ok": true,
+    "missing": [],
+    "visual": "table",
+    "expected_visual": "table",
+    "seconds": 4,
+    "tools": [
+      "spills",
+      "compliance"
+    ],
+    "answer": "In Southwest Block 24 over the last 90 days, two spills exceeded the 4-hour containment time limit under SOP-SR SR-02:\n\n- **WELL-0100**: Spill on 2026-09-10 (0.4 bbl, minor) contained after about 8.1 h (limit 4 h) [INS-0100-0196, MNT-0100-034, RPT-MNT-0100-034].\n- **WELL-0082**: Spill on 2026-09-10 (0.7 bbl, minor) contained after about 7.1 h (limit 4 h) [INS-0082-0198, MNT-0082-028, RPT-MNT-0082-028]."
+  },
+  {
+    "key": "Q11a",
+    "ok": true,
+    "missing": [],
+    "visual": "bar",
+    "expected_visual": "bar",
+    "seconds": 7,
+    "tools": [
+      "downtime"
+    ],
+    "answer": "In the last 4 months (16 June to 16 October 2026), the three wells in Northeast Block 7 with the most downtime were WELL-0121, WELL-0107, and WELL-0138. The next item is WELL-0119 with 28 days.\n\n- **WELL-0121 (T200)**: 49 days of downtime (7 not-producing inspections \u00d7 7 days). Readings and causes:\n  - 2026-06-18 ([INS-0121-0189]): wellhead 33.3 \u00b0C vs air 32.9 \u00b0C (0.4 \u00b0C above air); cause: Gearbox oil leak ([MNT-0121-031]).\n  - 2026-09-03 ([INS-0121-0200]): wellhead 29.8 \u00b0C vs air 29.2 \u00b0C (0.6 \u00b0C above air); cause: Prime mover failure ([MNT-0121-034]).\n  - 2026-09-10 ([INS-0121-0201]): wellhead 34.4 \u00b0C vs air 29.5 \u00b0C (4.9 \u00b0C above air); cause: Prime mover failure ([MNT-0121-034]).\n  - 2026-09-17 ([INS-0121-0202]): wellhead 27.1 \u00b0C vs air 27.9 \u00b0C (-0.8 \u00b0C above air); cause: Prime mover failure ([MNT-0121-034]).\n  - 2026-09-24 ([INS-0121-0203]): wellhead 33.0 \u00b0C vs air 27.8 \u00b0C (5.2 \u00b0C above air); cause: Prime mover failure ([MNT-0121-034]).\n  - 2026-10-08 ([INS-0121-0205]): wellhead 29.0 \u00b0C vs air 25.5 \u00b0C (3.5 \u00b0C above air); cause: Prime mover failure ([MNT-0121-035]).\n  - 2026-10-15 ([INS-0121-0206]): wellhead 22.7 \u00b0C vs air 21.7 \u00b0C (1.0 \u00b0C above air); cause: Prime mover failure ([MNT-0121-035]).\n\n- **WELL-0107 (T350)**: 42 days of downtime (6 not-producing inspections \u00d7 7 days). Readings and causes:\n  - 2026-07-02 ([INS-0107-0194]): wellhead 34.9 \u00b0C vs air 33.3 \u00b0C (1.6 \u00b0C above air); cause: Stuffing box packing leak ([MNT-0107-028]).\n  - 2026-07-09 ([INS-0107-0195]): wellhead 42.8 \u00b0C vs air 36.3 \u00b0C (6.5 \u00b0C above air); cause: Stuffing box packing leak ([MNT-0107-028]).\n  - 2026-07-16 ([INS-0107-0196]): wellhead 45.8 \u00b0C vs air 36.6 \u00b0C (9.2 \u00b0C above air); cause: Stuffing box packing leak ([MNT-0107-028]).\n  - 2026-07-23 ([INS-0107-0197]): wellhead 42.8 \u00b0C vs air 39.1 \u00b0C (3.7 \u00b0C above air); cause: Stuffing box packing leak ([MNT-0107-028]).\n  - 2026-07-30 ([INS-0107-0198]): wellhead 40.3 \u00b0C vs air 36.9 \u00b0C (3.4 \u00b0C above air); cause: Stuffing box packing leak ([MNT-0107-028]).\n  - 2026-08-06 ([INS-0107-0199]): wellhead 47.5 \u00b0C vs air 37.6 \u00b0C (9.9 \u00b0C above air); cause: Stuffing box packing leak ([MNT-0107-028]).\n\n- **WELL-0138 (T350)**: 42 days of downtime (6 not-producing inspections \u00d7 7 days). Readings and causes:\n  - 2026-07-16 ([INS-0138-0195]): wellhead 38.3 \u00b0C vs air 34.8 \u00b0C (3.5 \u00b0C above air); cause: Prime mover failure ([MNT-0138-031]).\n  - 2026-07-23 ([INS-0138-0196]): wellhead 39.4 \u00b0C vs air 36.9 \u00b0C (2.5 \u00b0C above air); cause: Prime mover failure ([MNT-0138-031]).\n  - 2026-08-20 ([INS-0138-0200]): wellhead 35.4 \u00b0C vs air 33.4 \u00b0C (2.0 \u00b0C above air); cause: Prime mover failure ([MNT-0138-032]).\n  - 2026-08-27 ([INS-0138-0201]): wellhead 38.4 \u00b0C vs air 30.3 \u00b0C (8.1 \u00b0C above air); cause: Prime mover failure ([MNT-0138-032]).\n  - 2026-10-01 ([INS-0138-0206]): wellhead 29.8 \u00b0C vs air 24.9 \u00b0C (4.9 \u00b0C above air); cause: Gearbox oil leak ([MNT-0138-034]).\n  - 2026-10-08 ([INS-0138-0207]): wellhead 29.8 \u00b0C vs air 21.7 \u00b0C (8.1 \u00b0C above air); cause: Gearbox oil leak ([MNT-0138-034])."
+  },
+  {
+    "key": "Q11b",
+    "ok": true,
+    "missing": [],
+    "visual": "table",
+    "expected_visual": null,
+    "seconds": 6,
+    "tools": [
+      "recall_my_conversations",
+      "repairs"
+    ],
+    "answer": "For the three wells discussed yesterday (WELL-0121, WELL-0107, and WELL-0138), total repair costs this year came to USD 77,912 across 23 maintenance jobs.\n\n- **WELL-0107**: Total USD 5,176 across 6 repairs ([MNT-0107-025], [MNT-0107-026], [MNT-0107-027], [MNT-0107-028], [MNT-0107-029], [MNT-0107-030]).\n- **WELL-0121**: Total USD 25,794 across 7 repairs ([MNT-0121-029], [MNT-0121-030], [MNT-0121-031], [MNT-0121-032], [MNT-0121-033], [MNT-0121-034], [MNT-0121-035]).\n- **WELL-0138**: Total USD 46,942 across 10 repairs ([MNT-0138-026], [MNT-0138-027], [MNT-0138-028], [MNT-0138-029], [MNT-0138-030], [MNT-0138-031], [MNT-0138-032], [MNT-0138-033], [MNT-0138-034], [MNT-0138-035])."
+  },
+  {
+    "key": "Q12a",
+    "ok": true,
+    "missing": [],
+    "visual": "status_card",
+    "expected_visual": null,
+    "seconds": 4,
+    "tools": [
+      "well_status",
+      "record_correction"
+    ],
+    "answer": "WELL-0164 is now producing after Michael Turner corrected the 15 Oct 2026 inspection [INS-0164-0205] wellhead temperature from 24.0 \u00b0C to 41.0 \u00b0C (reason: Handheld thermal gun used in that inspection was faulty; the field crew re-measured) [COR-0003]. It is now 21.1 \u00b0C above air (air 19.9 \u00b0C), meeting the T200 rule of at least 15.0 \u00b0C [T200 manual \u00a79.3]. However, the corrected reading conflicts with inspector Tyler Hughes's note on the same inspection: 'Pump jack not moving.' Please confirm."
+  },
+  {
+    "key": "Q12b",
+    "ok": true,
+    "missing": [],
+    "visual": "table",
+    "expected_visual": "table",
+    "seconds": 5,
+    "tools": [
+      "wells_not_producing"
+    ],
+    "answer": "Three wells in Northeast Block 8 are not producing oil right now [INS-0170-0206, INS-0172-0206, INS-0175-0204]. WELL-0164 is producing after Michael Turner corrected its 15 Oct 2026 inspection [INS-0164-0205] wellhead temperature to 41.0 \u00b0C [COR-0003], so it is excluded from this list.\n\n| Well ID | Type | Last Inspected | Inspection ID | Wellhead Above Air (\u00b0C) | Recorded Status | Reason & Evidence |\n|---|---|---|---|---|---|---|\n| WELL-0170 | T200 | 2026-10-15 | INS-0170-0206 | 2.9 \u00b0C | down | Repair MNT-0170-031: Walking beam bearing wear (pump_jack), started 19 Sep 2026, still open |\n| WELL-0172 | T200 | 2026-10-15 | INS-0172-0206 | 5.7 \u00b0C | active (out of date) | Repair MNT-0172-028: Flowline corrosion pinhole leak (flowline), started 03 Oct 2026, still open; Inspector note: 'No stroke observed during flight.' |\n| WELL-0175 | T200 | 2026-10-15 | INS-0175-0204 | 0.4 \u00b0C | active (out of date) | No recorded reason - suggest a field check [INS-0175-0204] |"
+  },
+  {
+    "key": "Q13",
+    "ok": true,
+    "missing": [],
+    "visual": "status_card",
+    "expected_visual": null,
+    "seconds": 4,
+    "tools": [
+      "record_correction"
+    ],
+    "answer": "The spill volume for the 24 Sep 2026 inspection at WELL-0151 [INS-0151-0201] was corrected from 4.5 bbl to 5.4 bbl by Michael Turner (reason: The field crew measured 5.4 bbl) via correction record [COR-0004], changing the spill class from moderate to reportable. This update caused the following compliance impacts: [breach] SR-01 for lack of written notice (overdue since 25 Sep 2026 15:30 UTC); [pending] SR-03 for agency verification of clean-up due by 23 Nov 2026; [breach] SR-02 for containment after 6.4 h (exceeding the 4 h limit) from report [MNT-0151-025] / [RPT-MNT-0151-025]; and [review] for report [MNT-0151-025], which previously classed the spill as moderate."
+  },
+  {
+    "key": "Q14a",
+    "ok": true,
+    "missing": [],
+    "visual": "table",
+    "expected_visual": "table",
+    "seconds": 5,
+    "tools": [
+      "rca_due"
+    ],
+    "answer": "Three wells in Northeast Block 7 need a root-cause analysis on their pump jack for having 3 corrective repairs in the 12 months to 17 Oct 2026, meeting the threshold of 3 per T200 manual section 10 (which also applies to T350 per section 6):\n- WELL-0108 (T350) with 3 corrective repairs: MNT-0108-024, MNT-0108-026, MNT-0108-028.\n- WELL-0121 (T200) with 3 corrective repairs: MNT-0121-031, MNT-0121-034, MNT-0121-035.\n- WELL-0138 (T350) with 3 corrective repairs: MNT-0138-031, MNT-0138-032, MNT-0138-034."
+  },
+  {
+    "key": "Q14b",
+    "ok": true,
+    "missing": [],
+    "visual": "status_card",
+    "expected_visual": null,
+    "seconds": 55,
+    "tools": [
+      "record_rule"
+    ],
+    "answer": "Saved team rule RULE-0001 from Michael Turner: rca_min_corrective for pump_jack = 2 for all T350 wells only, replacing the manual threshold of 3 [T200 manual \u00a710]."
+  },
+  {
+    "key": "Q14c",
+    "ok": true,
+    "missing": [],
+    "visual": "table",
+    "expected_visual": "table",
+    "seconds": 4,
+    "tools": [
+      "rca_due"
+    ],
+    "answer": "Four wells in Northeast Block 7 need a root-cause analysis on their pump jack due to corrective repairs in the 12 months to October 17, 2026: WELL-0108 (3 corrective repairs [MNT-0108-024, MNT-0108-026, MNT-0108-028] against a threshold of 2 per team rule RULE-0001 set by Michael Turner), WELL-0120 (2 corrective repairs [MNT-0120-025, MNT-0120-030] against a threshold of 2 per team rule RULE-0001 by Michael Turner), WELL-0121 (3 corrective repairs [MNT-0121-031, MNT-0121-034, MNT-0121-035] against a threshold of 3 per T200 manual \u00a710), and WELL-0138 (3 corrective repairs [MNT-0138-031, MNT-0138-032, MNT-0138-034] against a threshold of 2 per team rule RULE-0001 by Michael Turner)."
+  },
+  {
+    "key": "Q15a",
+    "ok": true,
+    "missing": [],
+    "visual": "status_card",
+    "expected_visual": "status_card",
+    "seconds": 2,
+    "tools": [
+      "well_status"
+    ],
+    "answer": "WELL-0164 is producing oil right now.\n\nEvidence from its latest inspection [INS-0164-0205] on 15 Oct 2026 (manual method, inspected by Tyler Hughes): wellhead temperature was 41.0 \u00b0C vs air 19.9 \u00b0C, which is 21.1 \u00b0C above air and meets the T200 manual \u00a79.3 requirement of at least 15.0 \u00b0C above air (computed as 41.0 \u00b0C \u2212 19.9 \u00b0C = 21.1 \u00b0C margin). The recorded status is 'active' and is up to date.\n\nNote that the wellhead temperature was corrected by Michael Turner [COR-0003] from an original value of 24.0 \u00b0C to 41.0 \u00b0C because the handheld thermal gun used in that inspection was faulty and the field crew re-measured. There is a disagreement: the inspector's own note on [INS-0164-0205] states \"Pump jack not moving.\", which suggests the well was not running."
+  },
+  {
+    "key": "Q15b",
+    "ok": true,
+    "missing": [],
+    "visual": "table",
+    "expected_visual": "table",
+    "seconds": 4,
+    "tools": [
+      "spills"
+    ],
+    "answer": "In Northeast Block 8, there was 1 spill in the last 90 days (18 Jul to 16 Oct 2026) that required a report to the regulator.\n\n- **WELL-0151**: On 2026-09-24, a reportable spill of 5.4 bbl (class: reportable, AI estimate: 4.5 bbl, volume corrected by Michael Turner) occurred at inspection [INS-0151-0201]. The regulator report status indicates no written notice is on record and it was overdue as of 25 Sep 2026 15:30 UTC [COR-0004].\n\nAdditionally, 2 other detections were excluded by corrections [SOP-SR \u00a77]:\n- **WELL-0194**: Detection on 2026-07-23 [INS-0194-0192] was corrected by Laura Simmons  due to a pump jack shadow.\n- **WELL-0199**: Detection on 2026-09-10 [INS-0199-0200] was corrected by Laura Simmons  due to a pump jack shadow."
+  },
+  {
+    "key": "Q16a",
+    "ok": true,
+    "missing": [],
+    "visual": "status_card",
+    "expected_visual": null,
+    "seconds": 4,
+    "tools": [
+      "well_status",
+      "record_note"
+    ],
+    "answer": "I have recorded your note for WELL-0007: \"WELL-0007 will be shut in from 17 Oct for a 10-day planned workover\" [FB-0001]. Every user asking about it will see this update."
+  },
+  {
+    "key": "Q16b",
+    "ok": true,
+    "missing": [],
+    "visual": "status_card",
+    "expected_visual": null,
+    "seconds": 3,
+    "tools": [
+      "well_status"
+    ],
+    "answer": "Yes, WELL-0007 is planned to be shut in from 17 Oct 2026 for a 10-day planned workover [FB-0001]. The well is currently producing as of its latest inspection INS-0007-0203 on 15 Oct 2026 by Sarah Mitchell, with a wellhead temperature of 50.6 \u00b0C versus air 20.7 \u00b0C (a 29.9 \u00b0C margin, meeting the T350 manual \u00a73 rule of at least 20.0 \u00b0C). The planned shut-in note was recorded by Jake Morales [FB-0001]."
+  },
+  {
+    "key": "Q16c",
+    "ok": true,
+    "missing": [],
+    "visual": null,
+    "expected_visual": null,
+    "seconds": 3,
+    "tools": [
+      "recall_my_conversations"
+    ],
+    "answer": "I have no such earlier conversation with you about three wells; yesterday's or earlier discussions do not match. Which wells would you like me to check repair costs for?"
+  },
+  {
+    "key": "Q17a",
+    "ok": true,
+    "missing": [],
+    "visual": "status_card",
+    "expected_visual": null,
+    "seconds": 5,
+    "tools": [
+      "well_status",
+      "record_note",
+      "record_claim"
+    ],
+    "answer": "WELL-0175 is confirmed shut in for planned work since 14 Oct 2026, matching the latest inspection [INS-0175-0204].\n\n- Producing: No (wellhead 24.3 \u00b0C vs air 23.9 \u00b0C = 0.4 \u00b0C above air; minimum required is 15.0 \u00b0C [T200 manual \u00a79.3]).\n- Latest inspection: [INS-0175-0204] on 2026-10-15 by inspector Jessica Reed (drone).\n- Wellhead vs air: 0.4 \u00b0C above air (margin: 14.6 \u00b0C below the 15.0 \u00b0C threshold) [T200 manual \u00a79.3].\n- Reason: Note saved by Michael Turner [FB-0002]: \"Shut in for planned work since 14 Oct\".\n- Recorded status: 'active' (out of date).\n- Claim and note: Recorded as claim [CLM-0001] and note [FB-0002], confirmed by data."
+  },
+  {
+    "key": "Q17b",
+    "ok": true,
+    "missing": [],
+    "visual": "status_card",
+    "expected_visual": null,
+    "seconds": 5,
+    "tools": [
+      "well_status",
+      "record_claim"
+    ],
+    "answer": "The data contradicts your claim that WELL-0175 is running fine; please confirm if its status has changed. At its latest inspection INS-0175-0204 on 15 Oct 2026 by Jessica Reed, the wellhead was only 0.4 C above air (24.3 C vs air 23.9 C), which misses the 15.0 C requirement for T200 wells [T200 manual \u00a79.3]. Additionally, Michael Turner noted and claimed that the well has been shut in for planned work since 14 Oct [FB-0002], [FB-0003], [CLM-0001], and your statement has been recorded as claim [CLM-0002] (contradicted_by_data)."
+  },
+  {
+    "key": "Q17c",
+    "ok": true,
+    "missing": [],
+    "visual": "status_card",
+    "expected_visual": null,
+    "seconds": 5,
+    "tools": [
+      "well_status",
+      "record_claim"
+    ],
+    "answer": "Your claim that WELL-0001 is back online since 14 Oct [CLM-0003] is contradicted by the latest inspection [INS-0001-0203] on 15 Oct 2026 by Ryan Brooks, which recorded the wellhead at 25.6 \u00b0C vs air 22.4 \u00b0C (3.2 \u00b0C above air, failing the T200 manual \u00a79.3 requirement of at least 15.0 \u00b0C) [T200 manual \u00a79.3]. It is also contradicted by your earlier note [CTX-0001-003], which stated an expected return around 20 Oct following a planned rod string replacement. The recorded status remains not producing (21 downtime days this year) [INS-0001-0203]. Please confirm whether the well has indeed resumed production despite the inspection readings [CLM-0003]."
+  },
+  {
+    "key": "Q18",
+    "ok": true,
+    "missing": [],
+    "visual": "status_card",
+    "expected_visual": null,
+    "seconds": 4,
+    "tools": [
+      "inspection_detail"
+    ],
+    "answer": "Yes, the 20 Aug spill at WELL-0101 was real crude oil [INS-0101-0197]. At the inspection on 20 Aug 2026 by Ashley Bennett, the AI flagged a 1.0 bbl spill and the inspector noted an oil sheen around the cellar [INS-0101-0197]. While Ryan Brooks noted it might only be produced water [CTX-0101-002], Chris Dalton sampled the stain confirming it is crude oil [CTX-0101-003]. No formal corrections were made, and a spill repair (flowline leak causing spill) was subsequently completed on 21 Aug 2026 [MNT-0101-029], so the detection stands [INS-0101-0197]."
+  }
+]

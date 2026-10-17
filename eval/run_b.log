@@ -1,0 +1,14 @@
+2026-10-17 11:34:01 [info     ] llm.hedge                      model=gemma-4-26b-a4b-it
+2026-10-17 11:34:01 [warning  ] llm.backoff                    attempt=1 delay_s=58.0 error="429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on" model=gemma-4-26b-a4b-it provider=gemini
+2026-10-17 11:35:09 [info     ] llm.hedge                      model=gemma-4-26b-a4b-it
+PASS Q9    134s tools=['compliance'] visual=table missing=[]
+2026-10-17 11:36:16 [info     ] llm.hedge                      model=gemma-4-26b-a4b-it
+2026-10-17 11:36:17 [warning  ] llm.backoff                    attempt=1 delay_s=0.1 error="500 INTERNAL. {'error': {'code': 500, 'message': 'Internal error encountered.', 'status': 'INTERNAL'}}" model=gemma-4-26b-a4b-it provider=gemini
+2026-10-17 11:36:18 [info     ] llm.hedge                      model=gemma-4-26b-a4b-it
+2026-10-17 11:36:18 [warning  ] llm.backoff                    attempt=2 delay_s=41.0 error="429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on" model=gemma-4-26b-a4b-it provider=gemini
+2026-10-17 11:37:09 [info     ] llm.hedge                      model=gemma-4-26b-a4b-it
+PASS Q11a   89s tools=['downtime'] visual=bar missing=[]
+2026-10-17 11:37:55 [info     ] llm.hedge                      model=gemma-4-26b-a4b-it
+2026-10-17 11:37:55 [warning  ] llm.backoff                    attempt=1 delay_s=4.0 error="429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on" model=gemma-4-26b-a4b-it provider=gemini
+2026-10-17 11:38:00 [info     ] llm.hedge                      model=gemma-4-26b-a4b-it
+2026-10-17 11:38:00 [warning  ] llm.backoff

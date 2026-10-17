@@ -1,0 +1,17 @@
+.env
+.venv/
+__pycache__/
+*.pyc
+data/raw/
+data/media/
+data/*.db
+.pytest_cache/
+.ruff_cache/
+.DS_Store
+data/raw/challenge/
+eval/last_run.json
+logs/
+docs/video/*.mp4
+docs/results/final*/
+data/raw/github/
+.env.bak
