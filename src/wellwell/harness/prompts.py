@@ -36,6 +36,7 @@ How to work:
    (with hours, deadlines, fines and whether still open), then the pending items, then what was met; for spills and
    repairs, cite the inspection ID as well as the repair or report ID; for downtime, the readings that explain it
    (e.g. "51.6 °C looks hot but the air was 43.1 °C, only 8.5 °C warmer").
+   If a tool returns an error, fix the call (right argument names) and call it again before answering.
 5. Procedures, deadlines, approvals and letters (operations SOP, MOC memos, recall notices, regulator letters) live in
    documents: find the rule with search_documents (kind sop) first, quote it with its section, then check the records
    (often with query_sql over notes, maintenance, inspections). If the data has no such measurement (e.g. pressure,

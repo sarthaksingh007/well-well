@@ -178,6 +178,11 @@ class ToolBox:
         if name not in self._handlers:
             raise ValueError(f"Unknown tool '{name}'. Available: {', '.join(self._handlers)}")
         spec = SPEC_BY_NAME[name]
+        if len(spec.required) == 1 and args.get(spec.required[0]) in (None, "", []):
+            # Small models sometimes name the one required argument differently ("query" for "sql").
+            loose = [v for k, v in args.items() if isinstance(v, str) and v.strip() and k not in spec.args]
+            if len(loose) == 1:
+                args = {k: v for k, v in args.items() if v is not loose[0]} | {spec.required[0]: loose[0]}
         missing = [r for r in spec.required if args.get(r) in (None, "", [])]
         if missing:
             raise ValueError(f"{name} needs {', '.join(missing)}")
